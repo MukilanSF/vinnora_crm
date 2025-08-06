@@ -1,0 +1,217 @@
+import React from 'react';
+import { Users, UserCheck, Handshake, IndianRupee, Clock, TrendingUp, AlertCircle } from 'lucide-react';
+import { DashboardStats, Reminder, Lead, Deal } from '../utils/types';
+
+interface DashboardProps {
+  stats: DashboardStats;
+  reminders: Reminder[];
+  recentLeads: Lead[];
+  recentDeals: Deal[];
+  onReminderComplete: (id: string) => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ 
+  stats, 
+  reminders, 
+  recentLeads, 
+  recentDeals, 
+  onReminderComplete 
+}) => {
+  const pendingReminders = reminders.filter(r => !r.completed);
+  
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0
+    }).format(amount);
+  };
+
+  const formatDate = (date: Date) => {
+    return new Intl.DateTimeFormat('en-IN', {
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    }).format(date);
+  };
+
+  const getStageColor = (stage: string) => {
+    switch (stage) {
+      case 'new': return 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300';
+      case 'contacted': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-500/20 dark:text-yellow-300';
+      case 'interested': return 'bg-green-100 text-green-800 dark:bg-green-500/20 dark:text-green-300';
+      case 'proposal-sent': return 'bg-purple-100 text-purple-800 dark:bg-purple-500/20 dark:text-purple-300';
+      case 'proposal': return 'bg-blue-100 text-blue-800 dark:bg-blue-500/20 dark:text-blue-300';
+      case 'negotiation': return 'bg-orange-100 text-orange-800 dark:bg-orange-500/20 dark:text-orange-300';
+      case 'deal-closed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300';
+    }
+  };
+
+  return (
+    <div className="space-y-8">
+      {/* Welcome Section */}
+      <div className="text-center py-6">
+        <h2 className="text-3xl font-light text-gray-900 dark:text-white mb-2">
+          Sales Homepage
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 text-lg">
+          Track your selling pipeline and manage leads effectively
+        </p>
+      </div>
+
+      {/* Stats Overview */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-600/20 dark:to-blue-700/20 border border-blue-200 dark:border-blue-600/30 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <Users className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+            <div>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stats.totalLeads}</p>
+              <p className="text-blue-700 dark:text-blue-300 text-sm">Total Leads</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-green-100 to-green-200 dark:from-green-600/20 dark:to-green-700/20 border border-green-200 dark:border-green-600/30 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <UserCheck className="w-8 h-8 text-green-600 dark:text-green-400" />
+            <div>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stats.totalCustomers}</p>
+              <p className="text-green-700 dark:text-green-300 text-sm">Customers</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-purple-100 to-purple-200 dark:from-purple-600/20 dark:to-purple-700/20 border border-purple-200 dark:border-purple-600/30 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <Handshake className="w-8 h-8 text-purple-600 dark:text-purple-400" />
+            <div>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">{stats.totalDeals}</p>
+              <p className="text-purple-700 dark:text-purple-300 text-sm">Active Deals</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-600/20 dark:to-emerald-700/20 border border-emerald-200 dark:border-emerald-600/30 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <IndianRupee className="w-8 h-8 text-emerald-600 dark:text-emerald-400" />
+            <div>
+              <p className="text-2xl font-semibold text-gray-900 dark:text-white">{formatCurrency(stats.totalRevenue)}</p>
+              <p className="text-emerald-700 dark:text-emerald-300 text-sm">Revenue</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Secondary Stats */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <Clock className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <div>
+              <p className="text-xl font-semibold text-gray-900 dark:text-white">{stats.pendingFollowUps}</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Pending Follow-ups</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <TrendingUp className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div>
+              <p className="text-xl font-semibold text-gray-900 dark:text-white">{stats.dealsThisMonth}</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Deals This Month</p>
+            </div>
+          </div>
+        </div>
+        
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center space-x-3">
+            <TrendingUp className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <div>
+              <p className="text-xl font-semibold text-gray-900 dark:text-white">{stats.conversionRate}%</p>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Deals Closed %</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Today's Reminders */}
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center space-x-2 mb-6">
+            <AlertCircle className="w-5 h-5 text-orange-600 dark:text-orange-400" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Today's Reminders</h3>
+          </div>
+          
+          <div className="space-y-4">
+            {pendingReminders.length === 0 ? (
+              <p className="text-gray-600 dark:text-gray-400 text-center py-8">
+                All caught up! No pending reminders.
+              </p>
+            ) : (
+              pendingReminders.slice(0, 5).map((reminder) => (
+                <div
+                  key={reminder.id}
+                  className="flex items-start space-x-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                >
+                  <button
+                    onClick={() => onReminderComplete(reminder.id)}
+                    className="mt-1 w-5 h-5 border-2 border-blue-600 dark:border-blue-400 rounded-full hover:bg-blue-600 dark:hover:bg-blue-400 transition-colors flex items-center justify-center"
+                  >
+                    <div className="w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full opacity-0 hover:opacity-100 transition-opacity" />
+                  </button>
+                  <div className="flex-1">
+                    <p className="text-gray-900 dark:text-white font-medium">{reminder.entityName}</p>
+                    <p className="text-gray-700 dark:text-gray-300 text-sm">{reminder.message}</p>
+                    <p className="text-gray-500 dark:text-gray-500 text-xs mt-1 capitalize">
+                      {reminder.entityType} • {formatDate(reminder.date)}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+
+        {/* Recent Activity */}
+        <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center space-x-2 mb-6">
+            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Recent Leads</h3>
+          </div>
+          
+          <div className="space-y-3">
+            {recentLeads.map((lead) => (
+              <div
+                key={lead.id}
+                className="flex items-center justify-between p-4 bg-gray-50/50 dark:bg-gray-800/30 rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 transition-all duration-200"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white text-sm font-semibold">
+                    {lead.name.split(' ').map(n => n[0]).join('')}
+                  </div>
+                  <div>
+                    <p className="text-gray-900 dark:text-white font-medium">{lead.name}</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">{lead.serviceInterest}</p>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStageColor(lead.stage)}`}>
+                    {lead.stage.replace('-', ' ')}
+                  </span>
+                  <p className="text-gray-500 dark:text-gray-500 text-xs mt-1">
+                    {formatDate(lead.createdAt)}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
