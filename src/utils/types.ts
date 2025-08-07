@@ -175,3 +175,13 @@ export interface BillFormData {
   gstRate: GSTRate;
   notes?: string;
 }
+
+export interface Inventory {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  price: number;
+  category: string;
+  description: string;
+}

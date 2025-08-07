@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Receipt, Calendar, IndianRupee, User, CheckCircle, Clock, AlertTriangle } from 'lucide-react';
 import { Bill } from '../utils/types';
+import SearchBar from './SearchBar';
 
 interface BillingListProps {
   bills: Bill[];
   onAddBill: () => void;
+  onEditBill: (bill: Bill) => void;
+  customers: any[]; // Add customers prop
+  setSelectedCustomer: (customer: any) => void; // Add setSelectedCustomer prop
+  setIsCustomerDetailOpen: (open: boolean) => void; // Add setIsCustomerDetailOpen prop
 }
 
-const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill }) => {
+const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill, customers, setSelectedCustomer, setIsCustomerDetailOpen }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'all' | 'paid' | 'pending' | 'overdue'>('all');
+  const [activeTab, setActiveTab] = useState<'bills' | 'customers'>('bills');
 
   const filteredBills = bills.filter(bill => {
     const matchesSearch = bill.billNumber.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -129,7 +135,8 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill }) => {
                 return (
                   <tr
                     key={bill.id}
-                    className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+                    onClick={() => onEditBill(bill)}
+                    className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
@@ -202,6 +209,34 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill }) => {
             {searchTerm ? 'Try adjusting your search terms' : 'Start creating bills for your customers'}
           </p>
         </div>
+      )}
+
+      {/* Customers Tab - Search Bar Example */}
+      {activeTab === 'customers' && (
+        <>
+          <div className="mb-6">
+            <SearchBar
+              placeholder="Search customers..."
+              data={customers}
+              filter={(customer, query) =>
+                customer.name.toLowerCase().includes(query.toLowerCase()) ||
+                customer.email?.toLowerCase().includes(query.toLowerCase()) ||
+                customer.phone?.includes(query)
+              }
+              onSelect={customer => {
+                setSelectedCustomer(customer);
+                setIsCustomerDetailOpen(true);
+              }}
+              display={customer => (
+                <div>
+                  <span className="font-semibold">{customer.name}</span>
+                  <span className="ml-2 text-xs text-gray-500">{customer.email}</span>
+                </div>
+              )}
+            />
+          </div>
+          {/* ...rest of customers page... */}
+        </>
       )}
     </div>
   );

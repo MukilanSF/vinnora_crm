@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Logo: React.FC<{ className?: string }> = ({ className = "w-8 h-8" }) => {
+const Logo: React.FC<{ className?: string }> = ({ className = "w-8 h-8 bg-white dark:bg-gray-900 text-gray-900 dark:text-white" }) => {
   return (
     <div className={className}>
       <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 48 48">

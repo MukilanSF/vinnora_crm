@@ -1,6 +1,11 @@
 import React from 'react';
+import { Bar, Line, Doughnut } from 'react-chartjs-2';
+import { Download } from 'lucide-react';
+import { Chart, CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Users, UserCheck, Handshake, IndianRupee, Clock, TrendingUp, AlertCircle } from 'lucide-react';
 import { DashboardStats, Reminder, Lead, Deal } from '../utils/types';
+
+Chart.register(CategoryScale, LinearScale, BarElement, PointElement, LineElement, ArcElement, Tooltip, Legend, ArcElement);
 
 interface DashboardProps {
   stats: DashboardStats;
@@ -8,6 +13,7 @@ interface DashboardProps {
   recentLeads: Lead[];
   recentDeals: Deal[];
   onReminderComplete: (id: string) => void;
+  plan: string;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ 
@@ -15,7 +21,8 @@ const Dashboard: React.FC<DashboardProps> = ({
   reminders, 
   recentLeads, 
   recentDeals, 
-  onReminderComplete 
+  onReminderComplete,
+  plan
 }) => {
   const pendingReminders = reminders.filter(r => !r.completed);
   
@@ -47,6 +54,58 @@ const Dashboard: React.FC<DashboardProps> = ({
       case 'deal-closed': return 'bg-emerald-100 text-emerald-800 dark:bg-emerald-500/20 dark:text-emerald-300';
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-500/20 dark:text-gray-300';
     }
+  };
+
+  // Example data for charts (replace with real data as needed)
+  const dealsFunnelData = {
+    labels: ['New', 'Contacted', 'Qualified', 'Won', 'Lost'],
+    datasets: [
+      {
+        label: 'Deals',
+        data: [stats.newDeals, stats.contactedDeals, stats.qualifiedDeals, stats.wonDeals, stats.lostDeals],
+        backgroundColor: [
+          '#2563eb', '#22d3ee', '#10b981', '#16a34a', '#ef4444'
+        ],
+      },
+    ],
+  };
+
+  const revenueTrendData = {
+    labels: stats.revenueMonths,
+    datasets: [
+      {
+        label: 'Revenue',
+        data: stats.revenueValues,
+        fill: false,
+        borderColor: '#2563eb',
+        backgroundColor: '#2563eb',
+        tension: 0.4,
+      },
+    ],
+  };
+
+  const ticketsData = {
+    labels: ['Open', 'In Progress', 'Resolved', 'Closed'],
+    datasets: [
+      {
+        label: 'Support Tickets',
+        data: [stats.openTickets, stats.inProgressTickets, stats.resolvedTickets, stats.closedTickets],
+        backgroundColor: ['#f59e42', '#fbbf24', '#10b981', '#64748b'],
+      },
+    ],
+  };
+
+  // Downloadable report handler
+  const handleDownloadReport = () => {
+    // Mock: Replace with real report generation/download logic
+    const csv = 'Report,Value\nRevenue,100000\nDeals,50\n';
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'dashboard_report.csv';
+    a.click();
+    window.URL.revokeObjectURL(url);
   };
 
   return (
@@ -208,6 +267,53 @@ const Dashboard: React.FC<DashboardProps> = ({
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Charts & Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        {/* Conversion Funnel */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Conversion Funnel</h3>
+          <Bar data={dealsFunnelData} options={{ plugins: { legend: { display: false } } }} />
+        </div>
+        {/* Revenue Trends */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Revenue Trends</h3>
+          <Line data={revenueTrendData} options={{ plugins: { legend: { display: false } } }} />
+        </div>
+      </div>
+
+      {/* Support Tickets Analytics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Support Tickets Status</h3>
+          <Doughnut data={ticketsData} />
+        </div>
+        {/* Downloadable Reports */}
+        <div className="bg-white dark:bg-gray-900 rounded-xl shadow p-6 flex flex-col items-center justify-center">
+          <h3 className="text-lg font-semibold mb-4">Downloadable Reports</h3>
+          {plan !== 'free' ? (
+            <button
+              onClick={handleDownloadReport}
+              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Download CSV Report
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+              title="Upgrade to download reports"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Download CSV Report
+            </button>
+          )}
+          <p className="text-gray-500 text-sm mt-2">
+            {plan === 'free' && 'Downloadable reports are not available for Free trial.'}
+          </p>
         </div>
       </div>
     </div>

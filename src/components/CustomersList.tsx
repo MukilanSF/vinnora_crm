@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Building, User, Phone, Mail, MapPin } from 'lucide-react';
 import { Customer } from '../utils/types';
+import SearchBar from './SearchBar';
 
 interface CustomersListProps {
   customers: Customer[];
@@ -12,6 +13,9 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, onAddCustomer,
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState<'all' | 'individual' | 'business'>('all');
   const [selectedStage, setSelectedStage] = useState<'all' | 'new' | 'contacted' | 'qualified' | 'lost'>('all');
+  const [activeTab, setActiveTab] = useState<'customers' | 'otherTab' | null>('customers');
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
+  const [isCustomerDetailOpen, setIsCustomerDetailOpen] = useState(false);
 
   const filteredCustomers = customers.filter(customer => {
     const matchesSearch = customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||

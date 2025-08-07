@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, AlertCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
 import { SupportTicket, Customer } from '../utils/types';
+import SearchBar from './SearchBar';
 
 interface SupportTicketsProps {
   tickets: SupportTicket[];
   onAddTicket: () => void;
   onEditTicket: (ticket: SupportTicket) => void;
+  activeTab: string; // <-- add this line
 }
 
 const statusColors: Record<string, string> = {
@@ -142,7 +144,7 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
         <thead className="bg-gray-50 dark:bg-gray-800">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Title</th>
-            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Contact</th>
+            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Customer</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Status</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Priority</th>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Created</th>
@@ -158,17 +160,12 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
                 className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
-                  <div className="flex items-center">
-                    <div className="text-sm font-medium text-gray-900 dark:text-white">
-                      {ticket.title}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400 ml-2">
-                      {ticket.description}
-                    </div>
+                  <div className="text-sm font-medium text-gray-900 dark:text-white">
+                    {ticket.title}
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {ticket.contactName || ticket.contactId}
+                  {ticket.customerName || ticket.customerId}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[ticket.status] || 'bg-gray-100 text-gray-600'}`}>

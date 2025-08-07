@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
-import { User, CreditCard, Users, Link, Shield, FileText, Receipt, Save, Upload, Download, Database, Settings as SettingsIcon, Eye, Edit } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import {
+  User, CreditCard, Users, Link, Shield, FileText, Database, Settings as SettingsIcon, Edit
+} from 'lucide-react';
+import UserManagement from './UserManagement';
 
 interface SettingsProps {
   activeSection: string;
@@ -7,134 +10,58 @@ interface SettingsProps {
 }
 
 const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) => {
+  // Profile data state
   const [profileData, setProfileData] = useState({
     fullName: 'admin',
     email: 'admin@vinnora.com',
     company: 'vinnora',
     phone: '',
-    address: ''
+    address: '',
+    plan: 'free'
   });
 
-  const [selectedEntity, setSelectedEntity] = useState('customers');
-  const [csvFile, setCsvFile] = useState<File | null>(null);
-  const [importProgress, setImportProgress] = useState(0);
-  const [isImporting, setIsImporting] = useState(false);
+  // Branding state
+  const [branding, setBranding] = useState({
+    name: '',
+    tagline: '',
+    logo: null as File | null,
+  });
+  const [themeColor, setThemeColor] = useState('#2563eb');
+  const [layout, setLayout] = useState('default');
+  const [previewBranding, setPreviewBranding] = useState<null | {
+    name: string;
+    tagline: string;
+    logo: File | null;
+    themeColor: string;
+    layout: string;
+  }>(null);
 
-  const settingsSections = [
-    { id: 'profile', label: 'Profile Settings', icon: User },
-    { id: 'subscription', label: 'Subscription', icon: CreditCard },
-    { id: 'data-management', label: 'Data Management', icon: Database },
-    { id: 'entity-management', label: 'Entity Management', icon: SettingsIcon },
-    { id: 'users', label: 'User Management', icon: Users },
-    { id: 'integrations', label: 'Integrations', icon: Link },
-    { id: 'security', label: 'Security', icon: Shield },
-    { id: 'billing-history', label: 'Billing History', icon: Receipt },
-    { id: 'privacy', label: 'Privacy Policy', icon: FileText }
-  ];
+  // Users state for User Management
+  const [users, setUsers] = useState([
+    { id: '1', name: 'Mukilan', email: 'mukilan@vinnora.com', role: 'Admin' },
+    { id: '2', name: 'Selva', email: 'selva@vinnora.com', role: 'User' },
+  ]);
 
-  const subscriptionPlans = [
-    {
-      name: 'Free Trial',
-      price: '₹0',
-      period: '/month',
-      features: [
-        'Up to 100 leads',
-        'Basic CRM features',
-        'Email support',
-        '1 user'
-      ],
-      current: true,
-      buttonText: 'Current Plan',
-      buttonClass: 'bg-orange-600 text-white cursor-not-allowed'
-    },
-    {
-      name: 'Starter',
-      price: '₹999',
-      period: '/month',
-      features: [
-        'Up to 1,000 leads',
-        'Pipeline management',
-        'Advanced analytics',
-        'Up to 5 users'
-      ],
-      current: false,
-      buttonText: 'Upgrade',
-      buttonClass: 'bg-orange-600 hover:bg-orange-700 text-white'
-    },
-    {
-      name: 'Professional',
-      price: '₹2,999',
-      period: '/month',
-      features: [
-        'Unlimited leads',
-        'Advanced automation',
-        'API access',
-        'Unlimited users',
-        'Priority support'
-      ],
-      current: false,
-      buttonText: 'Upgrade',
-      buttonClass: 'bg-orange-600 hover:bg-orange-700 text-white'
-    },
-    {
-      name: 'Enterprise',
-      price: 'Custom',
-      period: '',
-      features: [
-        'Everything in Professional',
-        'Custom integrations',
-        'Dedicated support',
-        'Advanced security'
-      ],
-      current: false,
-      buttonText: 'Contact Sales',
-      buttonClass: 'bg-gray-600 hover:bg-gray-700 text-white'
-    }
-  ];
+  // Plan variable
+  const plan = profileData.plan || 'free';
 
-  const entities = [
-    { id: 'leads', name: 'Leads', fields: ['name', 'phone', 'email', 'location', 'serviceInterest', 'source', 'stage'] },
-    { id: 'customers', name: 'Customers', fields: ['name', 'phone', 'email', 'address', 'gstin', 'companyName', 'type', 'stage'] },
-    { id: 'deals', name: 'Deals', fields: ['dealName', 'customerId', 'amount', 'currency', 'expectedCloseDate', 'stage'] },
-    { id: 'bills', name: 'Bills', fields: ['billNumber', 'customerId', 'amount', 'gstRate', 'paymentStatus', 'date'] }
-  ];
-
-  const handleProfileChange = (field: string, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }));
+  // Handler for creating a new user
+  const handleCreateUser = (user: { id: string; name: string; email: string; role: string }) => {
+    setUsers(prev => [...prev, user]);
   };
 
-  const handleSaveChanges = () => {
-    console.log('Saving profile changes:', profileData);
-  };
-
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file && file.type === 'text/csv') {
-      setCsvFile(file);
+  // Handler for logo upload
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setBranding(prev => ({ ...prev, logo: e.target.files![0] }));
     }
   };
 
-  const handleImportData = async () => {
-    if (!csvFile) return;
-    
-    setIsImporting(true);
-    setImportProgress(0);
-    
-    // Simulate import progress
-    for (let i = 0; i <= 100; i += 10) {
-      setImportProgress(i);
-      await new Promise(resolve => setTimeout(resolve, 200));
-    }
-    
-    setIsImporting(false);
-    setCsvFile(null);
-    alert('Data imported successfully!');
-  };
-
+  // Render functions for each section
   const renderProfileSettings = () => (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Profile Settings</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Profile</h2>
         <p className="text-gray-600 dark:text-gray-400">Manage your account information and preferences</p>
       </div>
 
@@ -146,7 +73,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
           <input
             type="text"
             value={profileData.fullName}
-            onChange={(e) => handleProfileChange('fullName', e.target.value)}
+            onChange={(e) => setProfileData(prev => ({ ...prev, fullName: e.target.value }))}
             className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         </div>
@@ -158,7 +85,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
           <input
             type="email"
             value={profileData.email}
-            onChange={(e) => handleProfileChange('email', e.target.value)}
+            onChange={(e) => setProfileData(prev => ({ ...prev, email: e.target.value }))}
             className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         </div>
@@ -170,7 +97,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
           <input
             type="text"
             value={profileData.company}
-            onChange={(e) => handleProfileChange('company', e.target.value)}
+            onChange={(e) => setProfileData(prev => ({ ...prev, company: e.target.value }))}
             className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
         </div>
@@ -182,7 +109,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
           <input
             type="tel"
             value={profileData.phone}
-            onChange={(e) => handleProfileChange('phone', e.target.value)}
+            onChange={(e) => setProfileData(prev => ({ ...prev, phone: e.target.value }))}
             placeholder="+91 98765 43210"
             className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
           />
@@ -195,7 +122,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
         </label>
         <textarea
           value={profileData.address}
-          onChange={(e) => handleProfileChange('address', e.target.value)}
+          onChange={(e) => setProfileData(prev => ({ ...prev, address: e.target.value }))}
           rows={4}
           className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
           placeholder="Enter your complete address"
@@ -203,12 +130,141 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
       </div>
 
       <button
-        onClick={handleSaveChanges}
+        onClick={() => console.log('Saving profile changes:', profileData)}
         className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-orange-600/25"
       >
-        <Save className="w-4 h-4" />
         <span>Save Changes</span>
       </button>
+    </div>
+  );
+
+  const renderBranding = () => (
+    <div className="space-y-6 mt-10">
+      <div>
+        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Branding</h2>
+        <p className="text-gray-600 dark:text-gray-400">Personalize your CRM with your own brand</p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {/* Logo Upload */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Brand Logo
+          </label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleLogoUpload}
+            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white"
+          />
+          {(previewBranding?.logo || branding.logo) && (
+            <div className="mt-2">
+              <img
+                src={previewBranding?.logo
+                  ? URL.createObjectURL(previewBranding.logo)
+                  : branding.logo
+                  ? URL.createObjectURL(branding.logo)
+                  : ''}
+                alt="Brand Logo"
+                className="h-16 w-16 object-contain rounded bg-gray-100 dark:bg-gray-800 border"
+              />
+            </div>
+          )}
+        </div>
+        {/* Brand Name */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Brand Name
+          </label>
+          <input
+            type="text"
+            value={previewBranding?.name ?? branding.name}
+            onChange={e => setBranding(prev => ({ ...prev, name: e.target.value }))}
+            placeholder="Your Company Name"
+            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white"
+          />
+        </div>
+        {/* Tagline */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Tagline
+          </label>
+          <input
+            type="text"
+            value={previewBranding?.tagline ?? branding.tagline}
+            onChange={e => setBranding(prev => ({ ...prev, tagline: e.target.value }))}
+            placeholder="Your Brand Tagline"
+            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white"
+          />
+        </div>
+        {/* Theme Color */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Theme Color
+          </label>
+          <input
+            type="color"
+            value={previewBranding?.themeColor ?? themeColor}
+            onChange={e => setThemeColor(e.target.value)}
+            className="w-16 h-10 p-0 border-0 bg-transparent"
+          />
+        </div>
+        {/* Layout Option */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Layout
+          </label>
+          <select
+            value={previewBranding?.layout ?? layout}
+            onChange={e => setLayout(e.target.value)}
+            className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 text-gray-900 dark:text-white"
+          >
+            <option value="default">Default</option>
+            <option value="compact">Compact</option>
+            <option value="spacious">Spacious</option>
+          </select>
+        </div>
+      </div>
+      {/* Apply & Preview Buttons */}
+      <div className="flex gap-4 mt-4">
+        <button
+          className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg transition-all duration-200"
+          onClick={() => {
+            // Apply previewed branding as actual branding
+            if (previewBranding) {
+              setBranding({
+                name: previewBranding.name,
+                tagline: previewBranding.tagline,
+                logo: previewBranding.logo,
+              });
+              setThemeColor(previewBranding.themeColor);
+              setLayout(previewBranding.layout);
+              setPreviewBranding(null);
+              document.documentElement.style.setProperty('--theme-color', previewBranding.themeColor);
+            } else {
+              document.documentElement.style.setProperty('--theme-color', themeColor);
+            }
+            // Show confirmation message
+            window.alert('Changes Applied');
+          }}
+        >
+          Apply
+        </button>
+        <button
+          className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-6 py-3 rounded-lg transition-all duration-200"
+          onClick={() => {
+            // Set previewBranding to current form values for preview
+            setPreviewBranding({
+              name: branding.name,
+              tagline: branding.tagline,
+              logo: branding.logo,
+              themeColor,
+              layout,
+            });
+          }}
+        >
+          Preview
+        </button>
+      </div>
     </div>
   );
 
@@ -220,7 +276,65 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {subscriptionPlans.map((plan, index) => (
+        {[
+          {
+            name: 'Free Trial',
+            price: '₹0',
+            period: '/month',
+            features: [
+              'Up to 100 leads',
+              'Basic CRM features',
+              'Email support',
+              '1 user'
+            ],
+            current: true,
+            buttonText: 'Current Plan',
+            buttonClass: 'bg-orange-600 text-white cursor-not-allowed'
+          },
+          {
+            name: 'Starter',
+            price: '₹999',
+            period: '/month',
+            features: [
+              'Up to 1,000 leads',
+              'Pipeline management',
+              'Advanced analytics',
+              'Up to 5 users'
+            ],
+            current: false,
+            buttonText: 'Upgrade',
+            buttonClass: 'bg-orange-600 hover:bg-orange-700 text-white'
+          },
+          {
+            name: 'Professional',
+            price: '₹2,999',
+            period: '/month',
+            features: [
+              'Unlimited leads',
+              'Advanced automation',
+              'API access',
+              'Unlimited users',
+              'Priority support'
+            ],
+            current: false,
+            buttonText: 'Upgrade',
+            buttonClass: 'bg-orange-600 hover:bg-orange-700 text-white'
+          },
+          {
+            name: 'Enterprise',
+            price: 'Custom',
+            period: '',
+            features: [
+              'Everything in Professional',
+              'Custom integrations',
+              'Dedicated support',
+              'Advanced security'
+            ],
+            current: false,
+            buttonText: 'Contact Sales',
+            buttonClass: 'bg-gray-600 hover:bg-gray-700 text-white'
+          }
+        ].map((plan, index) => (
           <div
             key={plan.name}
             className={`bg-white dark:bg-gray-800 border rounded-xl p-6 ${
@@ -254,6 +368,17 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
             </button>
           </div>
         ))}
+      </div>
+
+      {/* Billing History Section */}
+      <div className="space-y-6 mt-10">
+        <div>
+          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Billing History</h2>
+          <p className="text-gray-600 dark:text-gray-400">View your subscription billing history</p>
+        </div>
+        <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
+          <p className="text-gray-600 dark:text-gray-400">No billing history available for free plan.</p>
+        </div>
       </div>
     </div>
   );
@@ -399,7 +524,7 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
                 className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-all ${
                   selectedEntity === entity.id
                     ? 'bg-orange-100 text-orange-700 dark:bg-orange-500/20 dark:text-orange-300'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
                 <Database className="w-5 h-5" />
@@ -480,19 +605,11 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
   );
 
   const renderUserManagement = () => (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">User Management</h2>
-        <p className="text-gray-600 dark:text-gray-400">Manage team members and their permissions</p>
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <p className="text-gray-600 dark:text-gray-400">User management is available in paid plans.</p>
-        <button className="mt-4 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors">
-          Upgrade to Add Users
-        </button>
-      </div>
-    </div>
+    <UserManagement
+      users={users}
+      plan={plan}
+      onCreateUser={handleCreateUser}
+    />
   );
 
   const renderIntegrations = () => (
@@ -549,19 +666,6 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
     </div>
   );
 
-  const renderBillingHistory = () => (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">Billing History</h2>
-        <p className="text-gray-600 dark:text-gray-400">View your subscription billing history</p>
-      </div>
-
-      <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-6">
-        <p className="text-gray-600 dark:text-gray-400">No billing history available for free plan.</p>
-      </div>
-    </div>
-  );
-
   const renderPrivacyPolicy = () => (
     <div className="space-y-6">
       <div>
@@ -591,35 +695,43 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
     </div>
   );
 
+  // Content switcher
   const renderContent = () => {
     switch (activeSection) {
       case 'profile': return renderProfileSettings();
+      case 'branding': return renderBranding();
       case 'subscription': return renderSubscription();
       case 'data-management': return renderDataManagement();
       case 'entity-management': return renderEntityManagement();
       case 'users': return renderUserManagement();
       case 'integrations': return renderIntegrations();
       case 'security': return renderSecurity();
-      case 'billing-history': return renderBillingHistory();
       case 'privacy': return renderPrivacyPolicy();
       default: return renderProfileSettings();
     }
   };
 
+  // Settings sections for sidebar
+  const settingsSections = [
+    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'branding', label: 'Branding', icon: Edit },
+    { id: 'subscription', label: 'Subscription', icon: CreditCard },
+    { id: 'data-management', label: 'Data Management', icon: Database },
+    { id: 'entity-management', label: 'Entity Management', icon: SettingsIcon },
+    { id: 'users', label: 'User Management', icon: Users },
+    { id: 'integrations', label: 'Integrations', icon: Link },
+    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'privacy', label: 'Privacy Policy', icon: FileText }
+  ];
+
   return (
     <div className="flex h-full">
-      {/* Settings Sidebar */}
+      {/* Sidebar */}
       <div className="w-80 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 p-6">
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Settings</h1>
-          <p className="text-gray-600 dark:text-gray-400">Manage your account and preferences</p>
-        </div>
-
         <nav className="space-y-2">
           {settingsSections.map((section) => {
             const Icon = section.icon;
             const isActive = activeSection === section.id;
-            
             return (
               <button
                 key={section.id}
@@ -637,9 +749,8 @@ const Settings: React.FC<SettingsProps> = ({ activeSection, onSectionChange }) =
           })}
         </nav>
       </div>
-
       {/* Settings Content */}
-      <div className="flex-1 p-8 overflow-y-auto">
+      <div className="flex-1 p-8 overflow-y-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
         {renderContent()}
       </div>
     </div>

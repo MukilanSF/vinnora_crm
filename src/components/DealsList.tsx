@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Search, Filter, Plus, Handshake, Calendar, IndianRupee, User, TrendingUp } from 'lucide-react';
 import { Deal } from '../utils/types';
+import SearchBar from './SearchBar'; // Import your SearchBar component
 
 interface DealsListProps {
   deals: Deal[];
   onAddDeal: () => void;
   onEditDeal: (deal: Deal) => void;
+  activeTab: string; // Add activeTab prop
+  customers: any[]; // Add customers prop
+  setSelectedCustomer: (customer: any) => void; // Add setSelectedCustomer prop
+  setIsCustomerDetailOpen: (open: boolean) => void; // Add setIsCustomerDetailOpen prop
 }
 
-const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal }) => {
+const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal, activeTab, customers, setSelectedCustomer, setIsCustomerDetailOpen }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStage, setSelectedStage] = useState<'all' | Deal['stage']>('all');
 
@@ -202,6 +207,31 @@ const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal }) =
           <p className="text-gray-600 dark:text-gray-400">
             {searchTerm ? 'Try adjusting your search terms' : 'Start creating deals for your customers'}
           </p>
+        </div>
+      )}
+
+      {/* Customers Tab - Search Bar */}
+      {activeTab === 'customers' && (
+        <div className="mb-6">
+          <SearchBar
+            placeholder="Search customers..."
+            data={customers}
+            filter={(customer, query) =>
+              customer.name.toLowerCase().includes(query.toLowerCase()) ||
+              customer.email?.toLowerCase().includes(query.toLowerCase()) ||
+              customer.phone?.includes(query)
+            }
+            onSelect={customer => {
+              setSelectedCustomer(customer);
+              setIsCustomerDetailOpen(true);
+            }}
+            display={customer => (
+              <div>
+                <span className="font-semibold">{customer.name}</span>
+                <span className="ml-2 text-xs text-gray-500">{customer.email}</span>
+              </div>
+            )}
+          />
         </div>
       )}
     </div>

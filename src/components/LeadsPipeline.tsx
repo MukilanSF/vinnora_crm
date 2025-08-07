@@ -125,7 +125,7 @@ const LeadsPipeline: React.FC<LeadsPipelineProps> = ({ leads, onStageChange, onA
                     key={lead.id}
                     draggable
                     onDragStart={(e) => handleDragStart(e, lead.id)}
-                    className="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-move hover:scale-[1.02]"
+                    className="bg-white dark:bg-gray-900 rounded-xl p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-move hover:scale-[1.02]"
                   >
                     <div className="flex items-start justify-between mb-3">
                       <h4 className="font-medium text-gray-900 dark:text-white text-sm">{lead.name}</h4>

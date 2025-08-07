@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Add this at the top or in :root */
+:root {
+  --theme-color: #2563eb; /* Default theme color */
+}
+
+/* Example usage for buttons, links, etc. */
+.btn-primary,
+.bg-theme {
+  background-color: var(--theme-color) !important;
+  color: #fff;
+}
+
+.text-theme {
+  color: var(--theme-color) !important;
+}
+
+/* You can also use var(--theme-color) in other custom classes as needed */

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ThemeProvider } from './contexts/ThemeContext';
 import AuthLogin from './components/AuthLogin';
 import Settings from './components/Settings';
@@ -18,6 +18,7 @@ import DealsList from './components/DealsList';
 import NoteEntry from './components/NoteEntry';
 import SupportTicketEntry from './components/SupportTicketEntry';
 import SupportTickets from './components/SupportTickets';
+import SearchBar from './components/SearchBar';
 import { 
   mockLeads, 
   mockCustomers, 
@@ -29,6 +30,7 @@ import {
   mockSupportTickets
 } from './utils/data';
 import { Lead, Customer, Deal, Bill, Note, Reminder, DashboardStats, SupportTicket } from './utils/types';
+import BillDetail from './components/BillDetail';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -47,6 +49,8 @@ function App() {
   const [isDealDetailOpen, setIsDealDetailOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
   const [isSupportTicketEntryOpen, setIsSupportTicketEntryOpen] = useState(false);
+  const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
+  const [isBillDetailOpen, setIsBillDetailOpen] = useState(false);
   
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [customers, setCustomers] = useState<Customer[]>(mockCustomers);
@@ -56,6 +60,45 @@ function App() {
   const [reminders, setReminders] = useState<Reminder[]>(mockReminders);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>(mockDashboardStats);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(mockSupportTickets);
+
+  // Branding and theme state
+  const [branding, setBranding] = useState({
+    name: 'Vinnora CRM',
+    tagline: 'Built in India, for Indians',
+    logo: null as File | null,
+  });
+  const [themeColor, setThemeColor] = useState('#2563eb');
+  const [layout, setLayout] = useState('default');
+  const [previewBranding, setPreviewBranding] = useState<{
+    name: string;
+    tagline: string;
+    logo: File | null;
+    themeColor: string;
+    layout: string;
+  } | null>(null);
+
+  // Apply theme color to document root
+  useEffect(() => {
+    const color = previewBranding?.themeColor || themeColor;
+    document.documentElement.style.setProperty('--theme-color', color);
+  }, [themeColor, previewBranding]);
+
+  // Branding values to use (preview or applied)
+  const activeBranding = previewBranding
+    ? {
+        name: previewBranding.name,
+        tagline: previewBranding.tagline,
+        logo: previewBranding.logo,
+        themeColor: previewBranding.themeColor,
+        layout: previewBranding.layout,
+      }
+    : {
+        name: branding.name,
+        tagline: branding.tagline,
+        logo: branding.logo,
+        themeColor,
+        layout,
+      };
 
   const handleLogin = (user: any) => {
     setCurrentUser(user);
@@ -267,10 +310,19 @@ function App() {
           onShowSettings={() => setShowSettings(true)}
           onLogout={handleLogout}
           currentUser={currentUser}
+          branding={activeBranding}
         >
           <Settings
             activeSection={activeSettingsSection}
             onSectionChange={setActiveSettingsSection}
+            branding={branding}
+            setBranding={setBranding}
+            themeColor={themeColor}
+            setThemeColor={setThemeColor}
+            layout={layout}
+            setLayout={setLayout}
+            previewBranding={previewBranding}
+            setPreviewBranding={setPreviewBranding}
           />
         </Layout>
       </ThemeProvider>
@@ -329,10 +381,26 @@ function App() {
         );
       case 'billing':
         return (
-          <BillingList
-            bills={bills}
-            onAddBill={() => setIsBillEntryOpen(true)}
-          />
+          <>
+            <BillingList
+              bills={bills}
+              onAddBill={() => setIsBillEntryOpen(true)}
+              onEditBill={(bill) => {
+                setSelectedBill(bill);
+                setIsBillDetailOpen(true);
+              }}
+            />
+            <BillDetail
+              bill={selectedBill}
+              isOpen={isBillDetailOpen}
+              onClose={() => {
+                setIsBillDetailOpen(false);
+                setSelectedBill(null);
+              }}
+              onSave={() => {}} // Add onSave prop
+              plan={currentUser?.plan || 'free'} // Pass the user's plan
+            />
+          </>
         );
       case 'support-tickets':
         return (
@@ -347,6 +415,7 @@ function App() {
                 setSelectedTicket(ticket); // Pass selected ticket for editing
                 setIsSupportTicketEntryOpen(true);
               }}
+              activeTab={activeTab} // <-- add this line
             />
             <SupportTicketEntry
               ticket={selectedTicket || undefined} // Pass selected ticket or undefined
@@ -375,6 +444,7 @@ function App() {
         onShowSettings={() => setShowSettings(true)}
         onLogout={handleLogout}
         currentUser={currentUser}
+        branding={activeBranding}
       >
         {renderActiveTab()}
       </Layout>

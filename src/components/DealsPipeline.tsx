@@ -168,7 +168,7 @@ const DealsPipeline: React.FC<DealsPipelineProps> = ({ deals, onStageChange, onA
                       key={deal.id}
                       draggable
                       onDragStart={(e) => handleDragStart(e, deal.id)}
-                      className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-move hover:scale-[1.02]"
+                      className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-lg p-4 shadow-sm border border-gray-200 dark:border-gray-700 hover:shadow-md transition-all duration-200 cursor-move hover:scale-[1.02]"
                     >
                       <div className="mb-3">
                         <h4 className="font-medium text-gray-900 dark:text-white text-sm mb-1">{deal.dealName}</h4>
