@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Bill } from '../utils/types';
-import { X, Calendar, User, FileText, CreditCard } from 'lucide-react';
+import { X, Calendar, User, FileText, CreditCard, Mail, Shield } from 'lucide-react';
+import { mockCustomers } from '../utils/data';
+import EmailModal, { EmailData } from './EmailModal';
+import { generateEmailTemplate, getCustomerEmail } from '../utils/emailTemplates';
 
 interface BillDetailProps {
   bill: Bill | null;
@@ -18,6 +21,11 @@ const statusColors: Record<string, string> = {
 
 const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, plan }) => {
   const [form, setForm] = useState<Bill | null>(bill);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isSendingEmail, setIsSendingEmail] = useState(false);
+
+  // Plan restrictions for email functionality
+  const canSendEmail = plan === 'starter' || plan === 'professional';
 
   useEffect(() => {
     setForm(bill);
@@ -49,6 +57,21 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
       await new Promise((resolve) => setTimeout(resolve, 500)); // simulate network delay
       onSave(form); // update parent state
       onClose();    // close modal
+    }
+  };
+
+  const handleSendEmail = async (emailData: EmailData) => {
+    setIsSendingEmail(true);
+    try {
+      // Mock email sending - replace with actual email service
+      console.log('Sending email:', emailData);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      alert('Email sent successfully!');
+      setShowEmailModal(false);
+    } catch (error) {
+      alert('Failed to send email. Please try again.');
+    } finally {
+      setIsSendingEmail(false);
     }
   };
 
@@ -198,8 +221,9 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
 
           {/* Footer */}
           <div className="flex flex-col md:flex-row md:justify-between items-stretch md:items-center pt-6 pb-2 gap-3">
-            {/* Download Invoice Button (left) */}
-            <div>
+            {/* Left side - Download Invoice and Send Email buttons */}
+            <div className="flex space-x-3">
+              {/* Download Invoice Button */}
               {plan !== 'free' ? (
                 <button
                   type="button"
@@ -224,8 +248,35 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                   Download Invoice
                 </button>
               )}
+
+              {/* Send Email Button */}
+              {canSendEmail ? (
+                <button
+                  type="button"
+                  className="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
+                  style={{ minWidth: 160 }}
+                  onClick={() => setShowEmailModal(true)}
+                >
+                  <Mail className="w-4 h-4 mr-2" />
+                  Send Email
+                </button>
+              ) : (
+                <div className="relative">
+                  <button
+                    type="button"
+                    className="px-5 py-2 rounded bg-gray-300 text-gray-500 cursor-not-allowed flex items-center"
+                    disabled
+                    style={{ minWidth: 160 }}
+                    title="Upgrade to Starter+ to send emails"
+                  >
+                    <Shield className="w-4 h-4 mr-2" />
+                    Send Email
+                  </button>
+                </div>
+              )}
             </div>
-            {/* Cancel & Save Changes Buttons (right) */}
+
+            {/* Right side - Cancel & Save Changes Buttons */}
             <div className="flex space-x-3">
               <button
                 type="button"
@@ -248,6 +299,29 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
           </div>
         </form>
       </div>
+
+      {/* Email Modal */}
+      <EmailModal
+        isOpen={showEmailModal}
+        onClose={() => setShowEmailModal(false)}
+        onSend={handleSendEmail}
+        documentType="Invoice"
+        documentNumber={form?.billNumber}
+        defaultTo={bill ? getCustomerEmail(bill.customerId, mockCustomers) : ''}
+        defaultSubject={bill ? generateEmailTemplate({
+          documentType: 'Invoice',
+          documentNumber: bill.billNumber,
+          customerName: bill.customerName,
+          amount: bill.totalAmount || bill.amount
+        }).subject : ''}
+        defaultMessage={bill ? generateEmailTemplate({
+          documentType: 'Invoice',
+          documentNumber: bill.billNumber,
+          customerName: bill.customerName,
+          amount: bill.totalAmount || bill.amount
+        }).message : ''}
+        isLoading={isSendingEmail}
+      />
     </div>
   );
 };

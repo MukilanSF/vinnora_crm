@@ -65,6 +65,8 @@ export interface Bill {
   gstAmount: number;
   totalAmount: number;
   paymentStatus: PaymentStatus;
+  status: PaymentStatus; // Added for compatibility
+  description?: string; // Added for compatibility
   notes?: string;
   createdAt: Date;
   updatedAt: Date;

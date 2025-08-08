@@ -1,4 +1,4 @@
-import { Lead, Customer, Deal, Bill, Note, Reminder, User, DashboardStats } from './types';
+import { Lead, Customer, Deal, Bill, Note, Reminder, User, DashboardStats, SupportTicket } from './types';
 
 export const mockUsers: User[] = [
   {
@@ -160,6 +160,8 @@ export const mockBills: Bill[] = [
     gstAmount: 18000,
     totalAmount: 118000,
     paymentStatus: 'pending',
+    status: 'pending', // Added for compatibility
+    description: 'Web Development Services - Phase 1', // Added for compatibility
     notes: 'First milestone payment',
     createdAt: new Date('2024-01-15'),
     updatedAt: new Date('2024-01-15')

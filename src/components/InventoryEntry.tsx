@@ -96,7 +96,14 @@ const InventoryEntry: React.FC<InventoryEntryProps> = ({
             <label className="block text-sm font-medium mb-1">Description</label>
             <textarea name="description" value={form.description} onChange={handleChange} className="w-full px-3 py-2 border rounded" />
           </div>
-          <div className="flex justify-end">
+          <div className="flex justify-end space-x-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-all"
+            >
+              Cancel
+            </button>
             <button
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow transition-all flex items-center space-x-2"

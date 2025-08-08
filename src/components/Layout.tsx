@@ -12,6 +12,7 @@ import {
   Box,
 } from 'lucide-react';
 import Logo from './Logo';
+import PlanStatusBadge from './PlanStatusBadge';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -152,12 +153,14 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold">
-                  {currentUser?.fullName?.[0]?.toUpperCase() || 'A'}
+                  {currentUser?.fullName?.[0]?.toUpperCase() || currentUser?.name?.[0]?.toUpperCase() || 'A'}
                 </div>
                 <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900 dark:text-white">{currentUser?.fullName || 'admin'}</p>
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{currentUser?.fullName || currentUser?.name || 'admin'}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-300">{currentUser?.email || 'admin@vinnora.com'}</p>
-                  <p className="text-xs text-orange-600 dark:text-orange-300">Plan: {currentUser?.plan || 'free'}</p>
+                  <div className="mt-1">
+                    <PlanStatusBadge plan={currentUser?.plan || 'free'} />
+                  </div>
                 </div>
               </div>
               <button
@@ -180,8 +183,6 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
         </header>
         {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-auto bg-white text-gray-900">
-          {children}
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
           <div className="max-w-7xl mx-auto">
             {children}

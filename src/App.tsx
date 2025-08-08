@@ -115,6 +115,15 @@ function App() {
     setShowSettings(false);
   };
 
+  const handleUserUpdate = (userData: { name: string; email: string; plan: string }) => {
+    setCurrentUser((prev: any) => ({
+      ...prev,
+      name: userData.name,
+      email: userData.email,
+      plan: userData.plan
+    }));
+  };
+
   const handleCloseSettings = () => {
     setShowSettings(false);
   };
@@ -328,28 +337,22 @@ function App() {
   // Show settings screen
   if (showSettings) {
     return (
-      <Layout
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onNewNote={() => setIsNoteEntryOpen(true)}
-        onShowSettings={() => setShowSettings(true)}
-        onLogout={handleLogout}
+      <Settings
+        activeSection={activeSettingsSection}
+        onSectionChange={setActiveSettingsSection}
+        branding={branding}
+        setBranding={setBranding}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+        layout={layout}
+        setLayout={setLayout}
+        previewBranding={previewBranding}
+        setPreviewBranding={setPreviewBranding}
+        onClose={handleCloseSettings}
         currentUser={currentUser}
-        branding={activeBranding}
-      >
-        <Settings
-          activeSection={activeSettingsSection}
-          onSectionChange={setActiveSettingsSection}
-          branding={branding}
-          setBranding={setBranding}
-          themeColor={themeColor}
-          setThemeColor={setThemeColor}
-          layout={layout}
-          setLayout={setLayout}
-          previewBranding={previewBranding}
-          setPreviewBranding={setPreviewBranding}
-        />
-      </Layout>
+        activeBranding={activeBranding}
+        onUserUpdate={handleUserUpdate}
+      />
     );
   }
 
