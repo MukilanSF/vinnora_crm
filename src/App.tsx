@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider } from './contexts/ThemeContext';
 import AuthLogin from './components/AuthLogin';
 import Settings from './components/Settings';
 import Layout from './components/Layout';
@@ -19,6 +18,8 @@ import NoteEntry from './components/NoteEntry';
 import SupportTicketEntry from './components/SupportTicketEntry';
 import SupportTickets from './components/SupportTickets';
 import SearchBar from './components/SearchBar';
+import InventoryList from './components/InventoryList';
+import InventoryEntry from './components/InventoryEntry';
 import { 
   mockLeads, 
   mockCustomers, 
@@ -29,7 +30,7 @@ import {
   mockDashboardStats,
   mockSupportTickets
 } from './utils/data';
-import { Lead, Customer, Deal, Bill, Note, Reminder, DashboardStats, SupportTicket } from './utils/types';
+import { Lead, Customer, Deal, Bill, Note, Reminder, DashboardStats, SupportTicket, Inventory } from './utils/types';
 import BillDetail from './components/BillDetail';
 
 function App() {
@@ -51,6 +52,9 @@ function App() {
   const [isSupportTicketEntryOpen, setIsSupportTicketEntryOpen] = useState(false);
   const [selectedBill, setSelectedBill] = useState<Bill | null>(null);
   const [isBillDetailOpen, setIsBillDetailOpen] = useState(false);
+  const [inventories, setInventories] = useState<Inventory[]>([]);
+  const [selectedInventory, setSelectedInventory] = useState<Inventory | null>(null);
+  const [isInventoryEntryOpen, setIsInventoryEntryOpen] = useState(false);
   
   const [leads, setLeads] = useState<Lead[]>(mockLeads);
   const [customers, setCustomers] = useState<Customer[]>(mockCustomers);
@@ -109,6 +113,30 @@ function App() {
     setCurrentUser(null);
     setIsAuthenticated(false);
     setShowSettings(false);
+  };
+
+  const handleCloseSettings = () => {
+    setShowSettings(false);
+  };
+
+  const handleSaveInventory = (inventoryData: Omit<Inventory, 'id'>) => {
+    if (selectedInventory) {
+      // Update existing inventory
+      const updatedInventory: Inventory = {
+        ...selectedInventory,
+        ...inventoryData,
+      };
+      setInventories(inventories.map(inv => 
+        inv.id === selectedInventory.id ? updatedInventory : inv
+      ));
+    } else {
+      // Create new inventory
+      const newInventory: Inventory = {
+        ...inventoryData,
+        id: Math.random().toString(36).substr(2, 9),
+      };
+      setInventories([...inventories, newInventory]);
+    }
   };
 
   const handleSaveLead = (leadData: Omit<Lead, 'id' | 'createdAt' | 'updatedAt'>) => {
@@ -293,39 +321,28 @@ function App() {
   // Show login screen if not authenticated
   if (!isAuthenticated) {
     return (
-      <ThemeProvider>
-        <AuthLogin onLogin={handleLogin} />
-      </ThemeProvider>
+      <AuthLogin onLogin={handleLogin} />
     );
   }
 
   // Show settings screen
   if (showSettings) {
     return (
-      <ThemeProvider>
-        <Layout
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onNewNote={() => setIsNoteEntryOpen(true)}
-          onShowSettings={() => setShowSettings(true)}
-          onLogout={handleLogout}
-          currentUser={currentUser}
-          branding={activeBranding}
-        >
-          <Settings
-            activeSection={activeSettingsSection}
-            onSectionChange={setActiveSettingsSection}
-            branding={branding}
-            setBranding={setBranding}
-            themeColor={themeColor}
-            setThemeColor={setThemeColor}
-            layout={layout}
-            setLayout={setLayout}
-            previewBranding={previewBranding}
-            setPreviewBranding={setPreviewBranding}
-          />
-        </Layout>
-      </ThemeProvider>
+      <Settings
+        activeSection={activeSettingsSection}
+        onSectionChange={setActiveSettingsSection}
+        branding={branding}
+        setBranding={setBranding}
+        themeColor={themeColor}
+        setThemeColor={setThemeColor}
+        layout={layout}
+        setLayout={setLayout}
+        previewBranding={previewBranding}
+        setPreviewBranding={setPreviewBranding}
+        onClose={handleCloseSettings}
+        currentUser={currentUser}
+        activeBranding={activeBranding}
+      />
     );
   }
 
@@ -430,13 +447,38 @@ function App() {
             />
           </>
         );
+      case 'inventory':
+        return (
+          <>
+            <InventoryList
+              inventories={inventories}
+              onAddInventory={() => {
+                setSelectedInventory(null);
+                setIsInventoryEntryOpen(true);
+              }}
+              onEditInventory={(inventory) => {
+                setSelectedInventory(inventory);
+                setIsInventoryEntryOpen(true);
+              }}
+            />
+            <InventoryEntry
+              inventory={selectedInventory || undefined}
+              isOpen={isInventoryEntryOpen}
+              onClose={() => {
+                setIsInventoryEntryOpen(false);
+                setSelectedInventory(null);
+              }}
+              onSave={handleSaveInventory}
+            />
+          </>
+        );
       default:
         return null;
     }
   };
 
   return (
-    <ThemeProvider>
+    <>
       <Layout
         activeTab={activeTab}
         onTabChange={setActiveTab}
@@ -492,7 +534,7 @@ function App() {
             setIsCustomerDetailOpen(false);
             setSelectedCustomer(null);
           }}
-          onSave={handleSaveCustomer}
+          onSave={handleUpdateCustomer}
         />
       )}
       
@@ -505,7 +547,7 @@ function App() {
             setIsDealDetailOpen(false);
             setSelectedDeal(null);
           }}
-          onSave={handleSaveDeal}
+          onSave={handleUpdateDeal}
         />
       )}
       
@@ -517,8 +559,10 @@ function App() {
           setSelectedTicket(null);
         }}
         onSave={handleSaveTicket}
+        customers={customers}
+        deals={deals}
       />
-    </ThemeProvider>
+    </>
   );
 }
 

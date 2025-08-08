@@ -73,16 +73,14 @@ export interface Bill {
 export interface EntityField {
   id: string;
   name: string;
-  type: 'text' | 'number' | 'email' | 'phone' | 'date' | 'select' | 'textarea';
+  type: 'String' | 'Number' | 'Email' | 'Phone' | 'Date' | 'Id';
   required: boolean;
-  options?: string[];
 }
 
 export interface EntityConfig {
   id: EntityType;
   name: string;
   fields: EntityField[];
-  uniqueIdField: string;
 }
 
 export interface Note {
@@ -129,6 +127,7 @@ export interface SupportTicket {
   id: string;
   title: string;
   description: string;
+  contactId?: string;
   status: 'open' | 'in-progress' | 'resolved' | 'closed';
   priority: 'low' | 'medium' | 'high' | 'urgent';
   category: 'technical' | 'billing' | 'feature-request' | 'bug-report' | 'general';
@@ -137,6 +136,16 @@ export interface SupportTicket {
   createdAt: Date;
   updatedAt: Date;
   notes: Note[];
+}
+
+export interface Inventory {
+  id: string;
+  name: string;
+  sku: string;
+  quantity: number;
+  price: number;
+  category: string;
+  description: string;
 }
 
 // Form interfaces
@@ -174,14 +183,4 @@ export interface BillFormData {
   currency: Currency;
   gstRate: GSTRate;
   notes?: string;
-}
-
-export interface Inventory {
-  id: string;
-  name: string;
-  sku: string;
-  quantity: number;
-  price: number;
-  category: string;
-  description: string;
 }

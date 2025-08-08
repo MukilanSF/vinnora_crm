@@ -66,10 +66,6 @@ const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal, act
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Deals Management</h2>
-          <p className="text-gray-600 dark:text-gray-400">Manage your deals and opportunities</p>
-        </div>
         <button
           onClick={onAddDeal}
           className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25"

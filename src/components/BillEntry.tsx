@@ -82,23 +82,23 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <div className="bg-white text-gray-900 border border-gray-200 rounded-2xl w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-800">
-          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Create New Bill</h2>
+        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+          <h2 className="text-xl font-semibold text-gray-900">Create New Bill</h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
         <div className="p-6 space-y-6">
           {/* Customer Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Customer *
             </label>
             <div className="relative">
@@ -106,7 +106,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
               <select
                 value={formData.customerId}
                 onChange={(e) => handleInputChange('customerId', e.target.value)}
-                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 <option value="">Select a customer...</option>
                 {customers.map(customer => (
@@ -121,7 +121,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
           {/* Amount and Currency */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Base Amount *
               </label>
               <div className="relative">
@@ -133,19 +133,19 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
                   placeholder="0.00"
                   min="0"
                   step="0.01"
-                  className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
                 Currency
               </label>
               <select
                 value={formData.currency}
                 onChange={(e) => handleInputChange('currency', e.target.value)}
-                className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 {currencies.map(currency => (
                   <option key={currency} value={currency}>{currency}</option>
@@ -156,7 +156,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
 
           {/* GST Rate */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               GST Rate
             </label>
             <div className="relative">
@@ -164,7 +164,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
               <select
                 value={formData.gstRate}
                 onChange={(e) => handleInputChange('gstRate', parseInt(e.target.value))}
-                className="w-full pl-10 pr-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
                 {gstRates.map(rate => (
                   <option key={rate} value={rate}>{rate}%</option>
@@ -175,20 +175,20 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
 
           {/* Bill Summary */}
           {formData.amount && (
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 space-y-2">
-              <h3 className="font-medium text-gray-900 dark:text-white mb-3">Bill Summary</h3>
+            <div className="bg-gray-50 rounded-xl p-4 space-y-2">
+              <h3 className="font-medium text-gray-900 mb-3">Bill Summary</h3>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">Base Amount:</span>
-                <span className="text-gray-900 dark:text-white">{formatCurrency(parseFloat(formData.amount))}</span>
+                <span className="text-gray-600">Base Amount:</span>
+                <span className="text-gray-900">{formatCurrency(parseFloat(formData.amount))}</span>
               </div>
               <div className="flex justify-between text-sm">
-                <span className="text-gray-600 dark:text-gray-400">GST ({formData.gstRate}%):</span>
-                <span className="text-gray-900 dark:text-white">{formatCurrency(calculateGST())}</span>
+                <span className="text-gray-600">GST ({formData.gstRate}%):</span>
+                <span className="text-gray-900">{formatCurrency(calculateGST())}</span>
               </div>
-              <div className="border-t border-gray-200 dark:border-gray-700 pt-2">
+              <div className="border-t border-gray-200 pt-2">
                 <div className="flex justify-between font-medium">
-                  <span className="text-gray-900 dark:text-white">Total Amount:</span>
-                  <span className="text-purple-600 dark:text-purple-400">{formatCurrency(calculateTotal())}</span>
+                  <span className="text-gray-900">Total Amount:</span>
+                  <span className="text-purple-600">{formatCurrency(calculateTotal())}</span>
                 </div>
               </div>
             </div>
@@ -196,13 +196,13 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
 
           {/* Payment Status */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Payment Status
             </label>
             <select
               value={formData.paymentStatus}
               onChange={(e) => handleInputChange('paymentStatus', e.target.value)}
-              className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             >
               <option value="pending">Pending</option>
               <option value="paid">Paid</option>
@@ -212,7 +212,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
 
           {/* Notes */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Notes
             </label>
             <textarea
@@ -220,16 +220,16 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
               onChange={(e) => handleInputChange('notes', e.target.value)}
               placeholder="Additional notes or description..."
               rows={3}
-              className="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+              className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200 dark:border-gray-800">
+        <div className="flex items-center justify-end space-x-3 p-6 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="px-6 py-2 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 transition-colors"
+            className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
             Cancel
           </button>
@@ -238,7 +238,7 @@ const BillEntry: React.FC<BillEntryProps> = ({ isOpen, onClose, customers, onSav
             disabled={!formData.customerId || !formData.amount || isSaving}
             className={`flex items-center space-x-2 px-6 py-2 rounded-lg font-medium transition-all ${
               !formData.customerId || !formData.amount || isSaving
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                 : 'bg-purple-600 hover:bg-purple-700 text-white hover:scale-105 hover:shadow-lg hover:shadow-purple-600/25'
             }`}
           >

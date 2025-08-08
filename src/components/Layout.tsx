@@ -12,7 +12,6 @@ import {
   Box,
 } from 'lucide-react';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -50,19 +49,19 @@ const Layout: React.FC<LayoutProps> = ({
     { id: 'inventory' as const, label: 'Inventory', icon: Box },
   ];
 
-  // Use branding or fallback to defaults
   const brandName = branding?.name || 'Vinnora CRM';
   const brandTagline = branding?.tagline || 'Built in India, for Indians';
   const brandLogoUrl = branding?.logo
     ? URL.createObjectURL(branding.logo)
     : undefined;
 
-  // Optionally, you can use branding.themeColor for inline styles or let the CSS variable handle it
-
   return (
-    <div className="min-h-screen bg-gray-50 flex" style={branding?.themeColor ? { ['--theme-color' as any]: branding.themeColor } : {}}>
+    <div
+      className="h-screen w-screen flex bg-gray-50 dark:bg-gray-900"
+      style={branding?.themeColor ? { ['--theme-color' as any]: branding.themeColor } : {}}
+    >
       {/* Sidebar */}
-      <div className="w-64 bg-gradient-to-b from-[var(--theme-color)] to-orange-600 text-white flex flex-col">
+      <aside className="w-64 h-full bg-gradient-to-b from-[var(--theme-color)] to-orange-600 text-white flex flex-col shadow-xl overflow-y-auto">
         {/* Logo Section */}
         <div className="p-6 border-b border-orange-400">
           <div className="flex items-center space-x-3">
@@ -93,7 +92,6 @@ const Layout: React.FC<LayoutProps> = ({
                       ? 'bg-white/20 text-white shadow-lg'
                       : 'text-orange-100 hover:bg-white/10 hover:text-white'
                   }`}
-                  // Allow navigation from Settings page as well
                   type="button"
                 >
                   <Icon className="w-5 h-5" />
@@ -118,67 +116,74 @@ const Layout: React.FC<LayoutProps> = ({
             </button>
           </div>
         </nav>
-        {/* Sidebar Bottom */}
-        <div className="p-4 border-t border-orange-400">
-          <div className="flex items-center space-x-3 mb-4">
-            <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <span className="text-sm font-semibold">
-                {currentUser?.fullName?.[0]?.toUpperCase() || 'A'}
-              </span>
-            </div>
-            <div>
-              <p className="text-sm font-medium">{currentUser?.fullName || 'admin'}</p>
-              <p className="text-xs text-orange-100">{currentUser?.email || 'admin@vinnora.com'}</p>
-              <p className="text-xs text-orange-200">Plan: {currentUser?.plan || 'free'}</p>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <button 
-              onClick={onShowSettings}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-orange-100 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
-              type="button"
-            >
-              <Settings className="w-4 h-4" />
-              <span className="text-sm">Settings</span>
-            </button>
-            <button 
-              onClick={onLogout}
-              className="w-full flex items-center space-x-3 px-4 py-2 text-orange-100 hover:bg-white/10 hover:text-white rounded-lg transition-colors"
-              type="button"
-            >
-              <LogOut className="w-4 h-4" />
-              <span className="text-sm">Logout</span>
-            </button>
-          </div>
-        </div>
-      </div>
+      </aside>
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col h-full">
         {/* Top Header */}
-        <header className="bg-white border-b border-gray-200 px-6 py-4">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                {activeTab === 'homepage' && 'Sales Homepage'}
-                {activeTab === 'deals-list' && 'Selling Pipeline'}
-                {activeTab === 'deals' && 'Deals Management'}
-                {activeTab === 'customers' && 'Customers Management'}
-                {activeTab === 'billing' && 'Billing Management'}
-                {activeTab === 'inventory' && 'Inventory'}
-                {activeTab === 'support-tickets' && 'Support Tickets'}
-              </h2>
-              {activeTab === 'deals-list' && (
-                <p className="text-gray-600 text-sm">Drag and drop deals between stages</p>
-              )}
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-br from-[var(--theme-color)] to-orange-600 rounded-lg flex items-center justify-center">
+                  {activeTab === 'homepage' && <LayoutDashboard className="w-4 h-4 text-white" />}
+                  {activeTab === 'deals-list' && <TrendingUp className="w-4 h-4 text-white" />}
+                  {activeTab === 'deals' && <Handshake className="w-4 h-4 text-white" />}
+                  {activeTab === 'customers' && <UserCheck className="w-4 h-4 text-white" />}
+                  {activeTab === 'billing' && <Receipt className="w-4 h-4 text-white" />}
+                  {activeTab === 'inventory' && <Box className="w-4 h-4 text-white" />}
+                  {activeTab === 'support-tickets' && <Receipt className="w-4 h-4 text-white" />}
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">
+                    {activeTab === 'homepage' && 'Dashboard'}
+                    {activeTab === 'deals-list' && 'Pipeline'}
+                    {activeTab === 'deals' && 'Deals'}
+                    {activeTab === 'customers' && 'Customers'}
+                    {activeTab === 'billing' && 'Billing'}
+                    {activeTab === 'inventory' && 'Inventory'}
+                    {activeTab === 'support-tickets' && 'Support'}
+                  </h2>
+                  {activeTab === 'deals-list' && (
+                    <p className="text-gray-600 text-sm">Drag and drop deals between stages</p>
+                  )}
+                </div>
+              </div>
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold">
+                  {currentUser?.fullName?.[0]?.toUpperCase() || 'A'}
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white">{currentUser?.fullName || 'admin'}</p>
+                  <p className="text-xs text-gray-500 dark:text-gray-300">{currentUser?.email || 'admin@vinnora.com'}</p>
+                  <p className="text-xs text-orange-600 dark:text-orange-300">Plan: {currentUser?.plan || 'free'}</p>
+                </div>
+              </div>
+              <button
+                onClick={onShowSettings}
+                className="flex items-center space-x-2 px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                type="button"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-sm">Settings</span>
+              </button>
+              <button
+                onClick={onLogout}
+                className="flex items-center space-x-2 px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                type="button"
+              >
+                <LogOut className="w-4 h-4" />
+                <span className="text-sm">Logout</span>
+              </button>
             </div>
           </div>
         </header>
         {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-          {children}
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>

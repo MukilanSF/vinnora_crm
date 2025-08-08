@@ -83,10 +83,6 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
     <div className="support-tickets-section space-y-6">
       {/* Header */}
       <div className="section-header flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div>
-          <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">Support Tickets</h2>
-          <p className="text-gray-600 dark:text-gray-400">Manage customer support requests and issues</p>
-        </div>
         <button
           onClick={onAddTicket}
           className="primary flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-orange-600/25"
