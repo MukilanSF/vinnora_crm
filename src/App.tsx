@@ -431,87 +431,91 @@ function App() {
   };
 
   return (
-    <Layout
-      activeTab={activeTab}
-      onTabChange={setActiveTab}
-      onNewNote={() => setIsNoteEntryOpen(true)}
-      onShowSettings={() => setShowSettings(true)}
-      onLogout={handleLogout}
-      currentUser={currentUser}
-      branding={activeBranding}
-    >
-      {renderActiveTab()}
-    </Layout>
-    
-    <LeadEntry
-      isOpen={isLeadEntryOpen}
-      onClose={() => setIsLeadEntryOpen(false)}
-      onSave={handleSaveLead}
-    />
-    
-    <CustomerEntry
-      isOpen={isCustomerEntryOpen}
-      onClose={() => setIsCustomerEntryOpen(false)}
-      onSave={handleSaveCustomer}
-    />
-    
-    <DealEntry
-      isOpen={isDealEntryOpen}
-      onClose={() => setIsDealEntryOpen(false)}
-      customers={customers}
-      onSave={handleSaveDeal}
-    />
-    
-    <BillEntry
-      isOpen={isBillEntryOpen}
-      onClose={() => setIsBillEntryOpen(false)}
-      customers={customers}
-      onSave={handleSaveBill}
-    />
-    
-    <NoteEntry
-      isOpen={isNoteEntryOpen}
-      onClose={() => setIsNoteEntryOpen(false)}
-      leads={leads}
-      customers={customers}
-      deals={deals}
-      onSave={handleSaveNote}
-    />
-    
-    {selectedCustomer && (
-      <CustomerDetail
-        customer={selectedCustomer}
-        isOpen={isCustomerDetailOpen}
-        onClose={() => {
-          setIsCustomerDetailOpen(false);
-          setSelectedCustomer(null);
-        }}
+    <>
+      <Layout
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onNewNote={() => setIsNoteEntryOpen(true)}
+        onShowSettings={() => setShowSettings(true)}
+        onLogout={handleLogout}
+        currentUser={currentUser}
+        branding={activeBranding}
+      >
+        {renderActiveTab()}
+      </Layout>
+      
+      <LeadEntry
+        isOpen={isLeadEntryOpen}
+        onClose={() => setIsLeadEntryOpen(false)}
+        onSave={handleSaveLead}
+      />
+      
+      <CustomerEntry
+        isOpen={isCustomerEntryOpen}
+        onClose={() => setIsCustomerEntryOpen(false)}
         onSave={handleSaveCustomer}
       />
-    )}
-    
-    {selectedDeal && (
-      <DealDetail
-        deal={selectedDeal}
+      
+      <DealEntry
+        isOpen={isDealEntryOpen}
+        onClose={() => setIsDealEntryOpen(false)}
         customers={customers}
-        isOpen={isDealDetailOpen}
-        onClose={() => {
-          setIsDealDetailOpen(false);
-          setSelectedDeal(null);
-        }}
         onSave={handleSaveDeal}
       />
-    )}
-    
-    <SupportTicketEntry
-      ticket={selectedTicket || undefined}
-      isOpen={isSupportTicketEntryOpen}
-      onClose={() => {
-        setIsSupportTicketEntryOpen(false);
-        setSelectedTicket(null);
-      }}
-      onSave={handleSaveTicket}
-    />
+      
+      <BillEntry
+        isOpen={isBillEntryOpen}
+        onClose={() => setIsBillEntryOpen(false)}
+        customers={customers}
+        onSave={handleSaveBill}
+      />
+      
+      <NoteEntry
+        isOpen={isNoteEntryOpen}
+        onClose={() => setIsNoteEntryOpen(false)}
+        leads={leads}
+        customers={customers}
+        deals={deals}
+        onSave={handleSaveNote}
+      />
+      
+      {selectedCustomer && (
+        <CustomerDetail
+          customer={selectedCustomer}
+          isOpen={isCustomerDetailOpen}
+          onClose={() => {
+            setIsCustomerDetailOpen(false);
+            setSelectedCustomer(null);
+          }}
+          onSave={handleUpdateCustomer}
+        />
+      )}
+      
+      {selectedDeal && (
+        <DealDetail
+          deal={selectedDeal}
+          customers={customers}
+          isOpen={isDealDetailOpen}
+          onClose={() => {
+            setIsDealDetailOpen(false);
+            setSelectedDeal(null);
+          }}
+          onSave={handleUpdateDeal}
+        />
+      )}
+      
+      <SupportTicketEntry
+        ticket={selectedTicket || undefined}
+        isOpen={isSupportTicketEntryOpen}
+        onClose={() => {
+          setIsSupportTicketEntryOpen(false);
+          setSelectedTicket(null);
+        }}
+        onSave={handleSaveTicket}
+        customers={customers}
+        deals={deals}
+      />
+    </>
   );
 }
 
