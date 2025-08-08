@@ -53,23 +53,23 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 dark:bg-black/80 backdrop-blur-sm">
-      <div className="bg-[#181C24] dark:bg-[#181C24] rounded-2xl shadow-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto relative">
         {/* Header */}
-        <div className="flex items-center justify-between px-8 pt-8 pb-2 border-b border-gray-800 sticky top-0 bg-[#181C24] z-10">
+        <div className="flex items-center justify-between px-8 pt-8 pb-2 border-b border-gray-200 sticky top-0 bg-white z-10">
           <div className="flex items-center space-x-4">
-            <CreditCard className="w-10 h-10 text-blue-400 bg-blue-900/40 rounded-lg p-2" />
+            <CreditCard className="w-10 h-10 text-blue-600 bg-blue-100 rounded-lg p-2" />
             <div>
-              <div className="text-xl font-bold text-white">{form.description || 'Bill Details'}</div>
-              <div className="text-xs text-gray-400">Bill ID: {form.id}</div>
+              <div className="text-xl font-bold text-gray-900">{form.description || 'Bill Details'}</div>
+              <div className="text-xs text-gray-500">Bill ID: {form.id}</div>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-full hover:bg-gray-800 transition-colors"
+            className="p-2 rounded-full hover:bg-gray-100 transition-colors"
             aria-label="Close"
           >
-            <X className="w-5 h-5 text-gray-400" />
+            <X className="w-5 h-5 text-gray-500" />
           </button>
         </div>
 
@@ -77,7 +77,7 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Customer ID */}
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Customer ID</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Customer ID</label>
               <div className="relative">
                 <User className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                 <input
@@ -85,14 +85,14 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                   name="customerId"
                   value={form.customerId}
                   onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-[#232936] text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-blue-500 focus:outline-none"
                   required
                 />
               </div>
             </div>
             {/* Amount */}
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Amount</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Amount</label>
               <div className="relative">
                 <CreditCard className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                 <input
@@ -100,14 +100,14 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                   name="amount"
                   value={form.amount}
                   onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-[#232936] text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-blue-500 focus:outline-none"
                   required
                 />
               </div>
             </div>
             {/* Date */}
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Date</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Date</label>
               <div className="relative">
                 <Calendar className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                 <input
@@ -115,19 +115,19 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                   name="date"
                   value={typeof form.date === 'string' ? form.date : new Date(form.date).toISOString().split('T')[0]}
                   onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-[#232936] text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-blue-500 focus:outline-none"
                   required
                 />
               </div>
             </div>
             {/* Status */}
             <div>
-              <label className="block text-xs font-medium text-gray-400 mb-1">Status</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Status</label>
               <select
                 name="status"
                 value={form.status}
                 onChange={handleChange}
-                className="py-2 px-3 w-full rounded-lg bg-[#232936] text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                className="py-2 px-3 w-full rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-blue-500 focus:outline-none"
                 required
               >
                 <option value="paid">Paid</option>
@@ -137,7 +137,7 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
             </div>
             {/* Description */}
             <div className="md:col-span-2">
-              <label className="block text-xs font-medium text-gray-400 mb-1">Description</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Description</label>
               <div className="relative">
                 <FileText className="absolute left-3 top-2.5 w-4 h-4 text-gray-500" />
                 <input
@@ -145,7 +145,7 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                   name="description"
                   value={form.description || ''}
                   onChange={handleChange}
-                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-[#232936] text-white border border-gray-700 focus:border-blue-500 focus:outline-none"
+                  className="pl-10 pr-3 py-2 w-full rounded-lg bg-white text-gray-900 border border-gray-300 focus:border-blue-500 focus:outline-none"
                 />
               </div>
             </div>
@@ -153,9 +153,9 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
 
           {/* Timeline & Status */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-[#232936] rounded-xl p-4 border border-gray-800">
-              <div className="text-xs font-semibold text-gray-400 mb-2">Timeline</div>
-              <div className="flex items-center text-sm text-gray-300 mb-1">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
+              <div className="text-xs font-semibold text-gray-700 mb-2">Timeline</div>
+              <div className="flex items-center text-sm text-gray-600 mb-1">
                 <Calendar className="w-4 h-4 mr-2 text-gray-500" />
                 <span>
                   Created:{" "}
@@ -170,7 +170,7 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                     : '-'}
                 </span>
               </div>
-              <div className="flex items-center text-sm text-gray-300">
+              <div className="flex items-center text-sm text-gray-600">
                 <Calendar className="w-4 h-4 mr-2 text-gray-500" />
                 <span>
                   Last Updated:{" "}
@@ -186,10 +186,10 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
                 </span>
               </div>
             </div>
-            <div className="bg-[#232936] rounded-xl p-4 border border-gray-800 flex flex-col justify-between">
+            <div className="bg-gray-50 rounded-xl p-4 border border-gray-200 flex flex-col justify-between">
               <div>
-                <div className="text-xs font-semibold text-gray-400 mb-2">Bill Status</div>
-                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${statusColors[form.status] || 'bg-gray-700 text-white'}`}>
+                <div className="text-xs font-semibold text-gray-700 mb-2">Bill Status</div>
+                <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold ${statusColors[form.status] || 'bg-gray-200 text-gray-800'}`}>
                   {form.status ? form.status.charAt(0).toUpperCase() + form.status.slice(1) : ''}
                 </span>
               </div>
@@ -230,7 +230,7 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
               <button
                 type="button"
                 onClick={onClose}
-                className="px-5 py-2 bg-gray-700 text-gray-200 rounded hover:bg-gray-600 transition"
+                className="px-5 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition"
               >
                 Cancel
               </button>

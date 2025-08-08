@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { ThemeProvider } from './contexts/ThemeContext';
 import AuthLogin from './components/AuthLogin';
 import Settings from './components/Settings';
 import Layout from './components/Layout';
@@ -293,39 +292,35 @@ function App() {
   // Show login screen if not authenticated
   if (!isAuthenticated) {
     return (
-      <ThemeProvider>
-        <AuthLogin onLogin={handleLogin} />
-      </ThemeProvider>
+      <AuthLogin onLogin={handleLogin} />
     );
   }
 
   // Show settings screen
   if (showSettings) {
     return (
-      <ThemeProvider>
-        <Layout
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          onNewNote={() => setIsNoteEntryOpen(true)}
-          onShowSettings={() => setShowSettings(true)}
-          onLogout={handleLogout}
-          currentUser={currentUser}
-          branding={activeBranding}
-        >
-          <Settings
-            activeSection={activeSettingsSection}
-            onSectionChange={setActiveSettingsSection}
-            branding={branding}
-            setBranding={setBranding}
-            themeColor={themeColor}
-            setThemeColor={setThemeColor}
-            layout={layout}
-            setLayout={setLayout}
-            previewBranding={previewBranding}
-            setPreviewBranding={setPreviewBranding}
-          />
-        </Layout>
-      </ThemeProvider>
+      <Layout
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onNewNote={() => setIsNoteEntryOpen(true)}
+        onShowSettings={() => setShowSettings(true)}
+        onLogout={handleLogout}
+        currentUser={currentUser}
+        branding={activeBranding}
+      >
+        <Settings
+          activeSection={activeSettingsSection}
+          onSectionChange={setActiveSettingsSection}
+          branding={branding}
+          setBranding={setBranding}
+          themeColor={themeColor}
+          setThemeColor={setThemeColor}
+          layout={layout}
+          setLayout={setLayout}
+          previewBranding={previewBranding}
+          setPreviewBranding={setPreviewBranding}
+        />
+      </Layout>
     );
   }
 
@@ -436,89 +431,87 @@ function App() {
   };
 
   return (
-    <ThemeProvider>
-      <Layout
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        onNewNote={() => setIsNoteEntryOpen(true)}
-        onShowSettings={() => setShowSettings(true)}
-        onLogout={handleLogout}
-        currentUser={currentUser}
-        branding={activeBranding}
-      >
-        {renderActiveTab()}
-      </Layout>
-      
-      <LeadEntry
-        isOpen={isLeadEntryOpen}
-        onClose={() => setIsLeadEntryOpen(false)}
-        onSave={handleSaveLead}
-      />
-      
-      <CustomerEntry
-        isOpen={isCustomerEntryOpen}
-        onClose={() => setIsCustomerEntryOpen(false)}
+    <Layout
+      activeTab={activeTab}
+      onTabChange={setActiveTab}
+      onNewNote={() => setIsNoteEntryOpen(true)}
+      onShowSettings={() => setShowSettings(true)}
+      onLogout={handleLogout}
+      currentUser={currentUser}
+      branding={activeBranding}
+    >
+      {renderActiveTab()}
+    </Layout>
+    
+    <LeadEntry
+      isOpen={isLeadEntryOpen}
+      onClose={() => setIsLeadEntryOpen(false)}
+      onSave={handleSaveLead}
+    />
+    
+    <CustomerEntry
+      isOpen={isCustomerEntryOpen}
+      onClose={() => setIsCustomerEntryOpen(false)}
+      onSave={handleSaveCustomer}
+    />
+    
+    <DealEntry
+      isOpen={isDealEntryOpen}
+      onClose={() => setIsDealEntryOpen(false)}
+      customers={customers}
+      onSave={handleSaveDeal}
+    />
+    
+    <BillEntry
+      isOpen={isBillEntryOpen}
+      onClose={() => setIsBillEntryOpen(false)}
+      customers={customers}
+      onSave={handleSaveBill}
+    />
+    
+    <NoteEntry
+      isOpen={isNoteEntryOpen}
+      onClose={() => setIsNoteEntryOpen(false)}
+      leads={leads}
+      customers={customers}
+      deals={deals}
+      onSave={handleSaveNote}
+    />
+    
+    {selectedCustomer && (
+      <CustomerDetail
+        customer={selectedCustomer}
+        isOpen={isCustomerDetailOpen}
+        onClose={() => {
+          setIsCustomerDetailOpen(false);
+          setSelectedCustomer(null);
+        }}
         onSave={handleSaveCustomer}
       />
-      
-      <DealEntry
-        isOpen={isDealEntryOpen}
-        onClose={() => setIsDealEntryOpen(false)}
+    )}
+    
+    {selectedDeal && (
+      <DealDetail
+        deal={selectedDeal}
         customers={customers}
+        isOpen={isDealDetailOpen}
+        onClose={() => {
+          setIsDealDetailOpen(false);
+          setSelectedDeal(null);
+        }}
         onSave={handleSaveDeal}
       />
-      
-      <BillEntry
-        isOpen={isBillEntryOpen}
-        onClose={() => setIsBillEntryOpen(false)}
-        customers={customers}
-        onSave={handleSaveBill}
-      />
-      
-      <NoteEntry
-        isOpen={isNoteEntryOpen}
-        onClose={() => setIsNoteEntryOpen(false)}
-        leads={leads}
-        customers={customers}
-        deals={deals}
-        onSave={handleSaveNote}
-      />
-      
-      {selectedCustomer && (
-        <CustomerDetail
-          customer={selectedCustomer}
-          isOpen={isCustomerDetailOpen}
-          onClose={() => {
-            setIsCustomerDetailOpen(false);
-            setSelectedCustomer(null);
-          }}
-          onSave={handleSaveCustomer}
-        />
-      )}
-      
-      {selectedDeal && (
-        <DealDetail
-          deal={selectedDeal}
-          customers={customers}
-          isOpen={isDealDetailOpen}
-          onClose={() => {
-            setIsDealDetailOpen(false);
-            setSelectedDeal(null);
-          }}
-          onSave={handleSaveDeal}
-        />
-      )}
-      
-      <SupportTicketEntry
-        ticket={selectedTicket || undefined}
-        isOpen={isSupportTicketEntryOpen}
-        onClose={() => {
-          setIsSupportTicketEntryOpen(false);
-          setSelectedTicket(null);
-        }}
-        onSave={handleSaveTicket}
-      />
-    </ThemeProvider>
+    )}
+    
+    <SupportTicketEntry
+      ticket={selectedTicket || undefined}
+      isOpen={isSupportTicketEntryOpen}
+      onClose={() => {
+        setIsSupportTicketEntryOpen(false);
+        setSelectedTicket(null);
+      }}
+      onSave={handleSaveTicket}
+    />
   );
 }
 

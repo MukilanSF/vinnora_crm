@@ -12,7 +12,6 @@ import {
   Box,
 } from 'lucide-react';
 import Logo from './Logo';
-import ThemeToggle from './ThemeToggle';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -172,12 +171,11 @@ const Layout: React.FC<LayoutProps> = ({
               )}
             </div>
             <div className="flex items-center space-x-4">
-              <ThemeToggle />
             </div>
           </div>
         </header>
         {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-auto bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+        <main className="flex-1 p-6 overflow-auto bg-white text-gray-900">
           {children}
         </main>
       </div>

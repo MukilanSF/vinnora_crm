@@ -92,23 +92,23 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-2xl shadow-2xl w-full max-w-md p-8">
+      <div className="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8">
         {/* Logo and Branding */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
             <Logo className="w-12 h-12 text-orange-600" />
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Vinnora CRM</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-2">Selling Simplified</p>
-          <p className="text-sm text-gray-500 dark:text-gray-500 mt-1">Built in India, for Indians</p>
+          <h1 className="text-2xl font-bold text-gray-900">Vinnora CRM</h1>
+          <p className="text-gray-600 mt-2">Selling Simplified</p>
+          <p className="text-sm text-gray-500 mt-1">Built in India, for Indians</p>
         </div>
 
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">
               {showForgot ? 'Forgot Password' : isSignup ? 'Sign Up' : 'Welcome Back'}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-gray-600">
               {showForgot
                 ? 'Enter your email to reset your password'
                 : isSignup
@@ -126,7 +126,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                   <input
                     type="text"
                     name="name"
-                    className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800"
+                    className="w-full px-4 py-2 border rounded-lg bg-white"
                     value={form.name}
                     onChange={handleInput}
                     disabled={isLoading}
@@ -138,7 +138,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                 <input
                   type="email"
                   name="email"
-                  className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border rounded-lg bg-white"
                   value={form.email}
                   onChange={handleInput}
                   disabled={isLoading}
@@ -149,7 +149,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                 <input
                   type="password"
                   name="password"
-                  className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border rounded-lg bg-white"
                   value={form.password}
                   onChange={handleInput}
                   disabled={isLoading}
@@ -181,7 +181,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                 <input
                   type="email"
                   name="email"
-                  className="w-full px-4 py-2 border rounded-lg bg-white dark:bg-gray-800"
+                  className="w-full px-4 py-2 border rounded-lg bg-white"
                   value={form.email}
                   onChange={handleInput}
                   disabled={isLoading}
@@ -213,10 +213,10 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
             <button
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className={`w-full flex items-center justify-center space-x-3 px-6 py-3 border border-gray-300 dark:border-gray-700 rounded-lg transition-all duration-200 ${
+              className={`w-full flex items-center justify-center space-x-3 px-6 py-3 border border-gray-300 rounded-lg transition-all duration-200 ${
                 isLoading
-                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed dark:bg-gray-800'
-                  : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'bg-white text-gray-700 hover:bg-gray-50 hover:shadow-md'
               }`}
               style={{ marginTop: '1rem' }}
             >
@@ -237,7 +237,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
           )}
 
           <div className="mt-6 text-center">
-            <span className="text-gray-700 dark:text-gray-300">
+            <span className="text-gray-700">
               {isSignup ? 'Already have an account?' : "Don't have an account?"}
             </span>
             <button

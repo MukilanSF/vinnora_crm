@@ -86,16 +86,16 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
             placeholder="Search bills..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-3 bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
+            className="w-full pl-10 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all"
           />
         </div>
         
         <div className="flex items-center space-x-2">
-          <Filter className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+          <Filter className="w-5 h-5 text-gray-500" />
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value as any)}
-            className="bg-white/50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="bg-white/50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             <option value="all">All Status</option>
             <option value="paid">Paid</option>
@@ -106,29 +106,29 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
       </div>
 
       {/* Bills List */}
-      <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
+      <div className="bg-white/50 backdrop-blur-sm border border-gray-200 rounded-2xl overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
-            <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
+            <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Bill Details
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Customer
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Amount
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Date
                 </th>
-                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Status
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="divide-y divide-gray-200">
               {filteredBills.map((bill) => {
                 const StatusIcon = getStatusIcon(bill.paymentStatus);
                 
@@ -136,18 +136,18 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
                   <tr
                     key={bill.id}
                     onClick={() => onEditBill(bill)}
-                    className="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="cursor-pointer hover:bg-gray-100"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-3">
-                        <div className="w-10 h-10 bg-purple-100 dark:bg-purple-500/20 rounded-lg flex items-center justify-center">
-                          <Receipt className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                        <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+                          <Receipt className="w-5 h-5 text-purple-600" />
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          <p className="text-sm font-medium text-gray-900">
                             {bill.billNumber}
                           </p>
-                          <p className="text-xs text-gray-500 dark:text-gray-500">
+                          <p className="text-xs text-gray-500">
                             GST: {bill.gstRate}% • {formatCurrency(bill.gstAmount)}
                           </p>
                         </div>
@@ -157,7 +157,7 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <User className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-900 dark:text-white">
+                        <span className="text-sm text-gray-900">
                           {bill.customerName}
                         </span>
                       </div>
@@ -165,10 +165,10 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
                     
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-gray-900">
                           {formatCurrency(bill.totalAmount)}
                         </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-500">
+                        <p className="text-xs text-gray-500">
                           Base: {formatCurrency(bill.amount)}
                         </p>
                       </div>
@@ -177,7 +177,7 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
-                        <span className="text-sm text-gray-900 dark:text-white">
+                        <span className="text-sm text-gray-900">
                           {formatDate(bill.date)}
                         </span>
                       </div>
@@ -201,11 +201,11 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
 
       {filteredBills.length === 0 && (
         <div className="text-center py-12">
-          <div className="w-16 h-16 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Receipt className="w-8 h-8 text-gray-500 dark:text-gray-500" />
+          <div className="w-16 h-16 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Receipt className="w-8 h-8 text-gray-500" />
           </div>
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No bills found</h3>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h3 className="text-lg font-medium text-gray-900 mb-2">No bills found</h3>
+          <p className="text-gray-600">
             {searchTerm ? 'Try adjusting your search terms' : 'Start creating bills for your customers'}
           </p>
         </div>
