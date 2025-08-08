@@ -303,6 +303,31 @@ const Dashboard: React.FC<DashboardProps> = ({
           <h3 className="text-lg font-semibold mb-4">Support Tickets Status</h3>
           <Doughnut data={ticketsData} />
         </div>
+        {/* Downloadable Reports */}
+        <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center">
+          <h3 className="text-lg font-semibold mb-4">Downloadable Reports</h3>
+          {plan !== 'free' ? (
+            <button
+              onClick={handleDownloadReport}
+              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Download CSV Report
+            </button>
+          ) : (
+            <button
+              disabled
+              className="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+              title="Upgrade to download reports"
+            >
+              <Download className="w-5 h-5 mr-2" />
+              Download CSV Report
+            </button>
+          )}
+          <p className="text-gray-500 text-sm mt-2">
+            {plan === 'free' && 'Downloadable reports are not available for Free trial.'}
+          </p>
+        </div>
       </div>
     </div>
   );

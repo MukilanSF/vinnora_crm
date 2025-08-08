@@ -180,6 +180,8 @@ const Layout: React.FC<LayoutProps> = ({
           </div>
         </header>
         {/* Main Content Area */}
+        <main className="flex-1 p-6 overflow-auto bg-white text-gray-900">
+          {children}
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
           <div className="max-w-7xl mx-auto">
             {children}

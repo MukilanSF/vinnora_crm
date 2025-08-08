@@ -328,21 +328,28 @@ function App() {
   // Show settings screen
   if (showSettings) {
     return (
-      <Settings
-        activeSection={activeSettingsSection}
-        onSectionChange={setActiveSettingsSection}
-        branding={branding}
-        setBranding={setBranding}
-        themeColor={themeColor}
-        setThemeColor={setThemeColor}
-        layout={layout}
-        setLayout={setLayout}
-        previewBranding={previewBranding}
-        setPreviewBranding={setPreviewBranding}
-        onClose={handleCloseSettings}
+      <Layout
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        onNewNote={() => setIsNoteEntryOpen(true)}
+        onShowSettings={() => setShowSettings(true)}
+        onLogout={handleLogout}
         currentUser={currentUser}
-        activeBranding={activeBranding}
-      />
+        branding={activeBranding}
+      >
+        <Settings
+          activeSection={activeSettingsSection}
+          onSectionChange={setActiveSettingsSection}
+          branding={branding}
+          setBranding={setBranding}
+          themeColor={themeColor}
+          setThemeColor={setThemeColor}
+          layout={layout}
+          setLayout={setLayout}
+          previewBranding={previewBranding}
+          setPreviewBranding={setPreviewBranding}
+        />
+      </Layout>
     );
   }
 
