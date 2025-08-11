@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import { Upload, Save, Shield } from 'lucide-react';
 
 interface BrandingData {
@@ -14,6 +14,7 @@ interface BrandingSettingsProps {
   setThemeColor: (color: string) => void;
   setPreviewBranding: (branding: any) => void;
   plan: string;
+  onUpgrade?: (requiredPlan: string) => void;
 }
 
 const BrandingSettings: React.FC<BrandingSettingsProps> = ({
@@ -22,7 +23,8 @@ const BrandingSettings: React.FC<BrandingSettingsProps> = ({
   themeColor,
   setThemeColor,
   setPreviewBranding,
-  plan
+  plan,
+  onUpgrade
 }) => {
   const isProfessionalUser = plan === 'professional' || plan === 'enterprise';
 
@@ -52,7 +54,10 @@ const BrandingSettings: React.FC<BrandingSettingsProps> = ({
             </div>
           </div>
           <div className="mt-4">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors">
+            <button 
+              onClick={() => onUpgrade?.('professional')}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
               Upgrade to Professional
             </button>
           </div>

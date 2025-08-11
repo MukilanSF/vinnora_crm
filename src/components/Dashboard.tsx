@@ -14,6 +14,13 @@ interface DashboardProps {
   recentDeals: Deal[];
   onReminderComplete: (id: string) => void;
   plan: string;
+  // Add all data for comprehensive reporting
+  allLeads?: Lead[];
+  allCustomers?: any[];
+  allDeals?: Deal[];
+  allBills?: any[];
+  allSupportTickets?: any[];
+  allNotes?: any[];
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ 
@@ -22,10 +29,15 @@ const Dashboard: React.FC<DashboardProps> = ({
   recentLeads, 
   recentDeals, 
   onReminderComplete,
-  plan
+  plan,
+  allLeads = [],
+  allCustomers = [],
+  allDeals = [],
+  allBills = [],
+  allSupportTickets = [],
+  allNotes = []
 }) => {
   const pendingReminders = reminders.filter(r => !r.completed);
-  const [selectedReport, setSelectedReport] = useState<string>('');
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-IN', {
@@ -96,39 +108,209 @@ const Dashboard: React.FC<DashboardProps> = ({
     ],
   };
 
-  // Downloadable report handler
+  // Comprehensive Full Report Generation
+  const generateFullReport = () => {
+    try {
+      // Helper function to convert data to CSV format
+      const convertToCSV = (data: any[], headers: string[]) => {
+        if (data.length === 0) return headers.join(',') + '\n';
+        
+        const csvContent = [
+          headers.join(','),
+          ...data.map(row => 
+            headers.map(header => {
+              const value = row[header.toLowerCase().replace(/\s+/g, '')] || 
+                           row[header.toLowerCase()] || 
+                           row[header] || '';
+              // Escape commas and quotes in CSV values
+              return typeof value === 'string' && (value.includes(',') || value.includes('"')) 
+                ? `"${value.replace(/"/g, '""')}"` 
+                : value;
+            }).join(',')
+          )
+        ].join('\n');
+        
+        return csvContent;
+      };
+
+      // Format date for CSV
+      const formatDateForCSV = (date: Date | string) => {
+        const d = new Date(date);
+        return d.toLocaleDateString('en-IN') + ' ' + d.toLocaleTimeString('en-IN');
+      };
+
+      // Prepare Leads Data
+      const leadsHeaders = ['ID', 'Name', 'Phone', 'Email', 'Location', 'Service Interest', 'Source', 'Stage', 'Assigned To', 'Created At', 'Updated At'];
+      const leadsData = allLeads.map(lead => ({
+        id: lead.id,
+        name: lead.name,
+        phone: lead.phone,
+        email: lead.email,
+        location: lead.location,
+        serviceinterest: lead.serviceInterest,
+        source: lead.source,
+        stage: lead.stage,
+        assignedto: lead.assignedTo || 'Unassigned',
+        createdat: formatDateForCSV(lead.createdAt),
+        updatedat: formatDateForCSV(lead.updatedAt)
+      }));
+
+      // Prepare Customers Data
+      const customersHeaders = ['ID', 'Name', 'Email', 'Phone', 'Address', 'Company Name', 'GSTIN', 'Type', 'Stage', 'Created At', 'Updated At'];
+      const customersData = allCustomers.map(customer => ({
+        id: customer.id,
+        name: customer.name,
+        email: customer.email,
+        phone: customer.phone,
+        address: customer.address || '',
+        companyname: customer.companyName || '',
+        gstin: customer.gstin || '',
+        type: customer.type,
+        stage: customer.stage,
+        createdat: formatDateForCSV(customer.createdAt),
+        updatedat: formatDateForCSV(customer.updatedAt)
+      }));
+
+      // Prepare Deals Data
+      const dealsHeaders = ['ID', 'Deal Name', 'Customer Name', 'Amount', 'Stage', 'Expected Close Date', 'Assigned To', 'Created At', 'Updated At'];
+      const dealsData = allDeals.map(deal => ({
+        id: deal.id,
+        dealname: deal.dealName,
+        customername: deal.customerName,
+        amount: deal.amount,
+        stage: deal.stage,
+        expectedclosedate: formatDateForCSV(deal.expectedCloseDate),
+        assignedto: deal.assignedTo || 'Unassigned',
+        createdat: formatDateForCSV(deal.createdAt),
+        updatedat: formatDateForCSV(deal.updatedAt)
+      }));
+
+      // Prepare Bills Data
+      const billsHeaders = ['ID', 'Bill Number', 'Customer Name', 'Amount', 'GST Rate', 'GST Amount', 'Total Amount', 'Payment Status', 'Date', 'Created At'];
+      const billsData = allBills.map(bill => ({
+        id: bill.id,
+        billnumber: bill.billNumber,
+        customername: bill.customerName,
+        amount: bill.amount,
+        gstrate: bill.gstRate + '%',
+        gstamount: bill.gstAmount,
+        totalamount: bill.totalAmount,
+        paymentstatus: bill.paymentStatus,
+        date: formatDateForCSV(bill.date),
+        createdat: formatDateForCSV(bill.createdAt)
+      }));
+
+      // Prepare Support Tickets Data
+      const ticketsHeaders = ['ID', 'Title', 'Customer', 'Status', 'Priority', 'Category', 'Assigned To', 'Created By', 'Created At', 'Updated At'];
+      const ticketsData = allSupportTickets.map(ticket => ({
+        id: ticket.id,
+        title: ticket.title,
+        customer: ticket.customerName || ticket.customerId || '',
+        status: ticket.status,
+        priority: ticket.priority,
+        category: ticket.category,
+        assignedto: ticket.assignedTo || 'Unassigned',
+        createdby: ticket.createdBy,
+        createdat: formatDateForCSV(ticket.createdAt),
+        updatedat: formatDateForCSV(ticket.updatedAt)
+      }));
+
+      // Prepare Summary Data
+      const summaryHeaders = ['Metric', 'Value'];
+      const summaryData = [
+        { metric: 'Total Leads', value: stats.totalLeads },
+        { metric: 'Total Customers', value: stats.totalCustomers },
+        { metric: 'Total Deals', value: stats.totalDeals },
+        { metric: 'Total Revenue', value: `₹${stats.totalRevenue.toLocaleString('en-IN')}` },
+        { metric: 'Pending Follow-ups', value: stats.pendingFollowUps },
+        { metric: 'Deals This Month', value: stats.dealsThisMonth },
+        { metric: 'Conversion Rate', value: `${stats.conversionRate}%` },
+        { metric: 'Report Generated On', value: formatDateForCSV(new Date()) }
+      ];
+
+      // Generate CSV content for each sheet
+      const summaryCSV = convertToCSV(summaryData, summaryHeaders);
+      const leadsCSV = convertToCSV(leadsData, leadsHeaders);
+      const customersCSV = convertToCSV(customersData, customersHeaders);
+      const dealsCSV = convertToCSV(dealsData, dealsHeaders);
+      const billsCSV = convertToCSV(billsData, billsHeaders);
+      const ticketsCSV = convertToCSV(ticketsData, ticketsHeaders);
+
+      // Combine all data into a comprehensive report
+      const fullReport = [
+        '=== VINNORA CRM FULL ANALYTICS REPORT ===',
+        `Generated on: ${new Date().toLocaleString('en-IN')}`,
+        `Plan: ${plan.toUpperCase()}`,
+        '',
+        '=== SUMMARY METRICS ===',
+        summaryCSV,
+        '',
+        '=== LEADS DATA ===',
+        leadsCSV,
+        '',
+        '=== CUSTOMERS DATA ===',
+        customersCSV,
+        '',
+        '=== DEALS DATA ===',
+        dealsCSV,
+        '',
+        '=== BILLS DATA ===',
+        billsCSV,
+        '',
+        '=== SUPPORT TICKETS DATA ===',
+        ticketsCSV,
+        '',
+        '=== END OF REPORT ==='
+      ].join('\n');
+
+      // Create and download the comprehensive report
+      const blob = new Blob([fullReport], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `vinnora_crm_full_analytics_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      // Show success message
+      alert('Full Analytics Report downloaded successfully! The report contains separate sections for all entities.');
+      
+    } catch (error) {
+      console.error('Error generating report:', error);
+      alert('Error generating report. Please try again.');
+    }
+  };
+
+  // Downloadable report handler (kept for backward compatibility but now calls full report)
   const handleDownloadReport = () => {
-    // Mock: Replace with real report generation/download logic
-    const csv = 'Report,Value\nTotal Revenue,100000\nTotal Deals,50\n';
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `dashboard_report.csv`;
-    a.click();
-    window.URL.revokeObjectURL(url);
+    generateFullReport();
   };
 
   return (
-    <div className="space-y-6">
-      {/* Download CSV Button Row */}
+    <div className="space-y-4 sm:space-y-6">
+      {/* Download Full Report Button Row */}
       <div className="flex justify-end">
         {plan !== 'free' ? (
           <button
             onClick={handleDownloadReport}
-            className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+            className="flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg transition-all duration-200 touch-manipulation shadow-lg hover:shadow-xl"
+            title="Download comprehensive analytics report with all entities"
           >
-            <Download className="w-5 h-5 mr-2" />
-            Download CSV Report
+            <Download className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
+            <span className="hidden sm:inline">Download Full Report</span>
+            <span className="sm:hidden">Full Report</span>
           </button>
         ) : (
           <button
             disabled
-            className="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-            title="Upgrade to download reports"
+            className="flex items-center px-4 sm:px-6 py-2 sm:py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
+            title="Upgrade to download comprehensive analytics reports"
           >
-            <Download className="w-5 h-5 mr-2" />
-            Download CSV Report
+            <Download className="w-4 sm:w-5 h-4 sm:h-5 mr-2" />
+            <span className="hidden sm:inline">Download Full Report</span>
+            <span className="sm:hidden">Full Report</span>
           </button>
         )}
       </div>
@@ -303,30 +485,24 @@ const Dashboard: React.FC<DashboardProps> = ({
           <h3 className="text-lg font-semibold mb-4">Support Tickets Status</h3>
           <Doughnut data={ticketsData} />
         </div>
-        {/* Downloadable Reports */}
-        <div className="bg-white rounded-xl shadow p-6 flex flex-col items-center justify-center">
-          <h3 className="text-lg font-semibold mb-4">Downloadable Reports</h3>
-          {plan !== 'free' ? (
-            <button
-              onClick={handleDownloadReport}
-              className="flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
-            >
-              <Download className="w-5 h-5 mr-2" />
-              Download CSV Report
-            </button>
-          ) : (
-            <button
-              disabled
-              className="flex items-center px-6 py-3 bg-gray-300 text-gray-500 rounded-lg cursor-not-allowed"
-              title="Upgrade to download reports"
-            >
-              <Download className="w-5 h-5 mr-2" />
-              Download CSV Report
-            </button>
-          )}
-          <p className="text-gray-500 text-sm mt-2">
-            {plan === 'free' && 'Downloadable reports are not available for Free trial.'}
-          </p>
+        
+        {/* Activity Overview */}
+        <div className="bg-white rounded-xl shadow p-6">
+          <h3 className="text-lg font-semibold mb-4">Recent Activity Overview</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+              <span className="text-sm font-medium text-blue-900">Active Leads</span>
+              <span className="text-lg font-bold text-blue-600">{stats.totalLeads}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+              <span className="text-sm font-medium text-green-900">Customers</span>
+              <span className="text-lg font-bold text-green-600">{stats.totalCustomers}</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+              <span className="text-sm font-medium text-purple-900">Active Deals</span>
+              <span className="text-lg font-bold text-purple-600">{stats.totalDeals}</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -2,13 +2,13 @@ import React, { useState } from 'react';
 import {
   User, CreditCard, Users, Link, Shield, FileText, Database, Settings as SettingsIcon, Edit, ArrowLeft, X
 } from 'lucide-react';
-import UserManagement from './UserManagement';
 import {
   ProfileSettings,
   BrandingSettings,
   SubscriptionSettings,
   DataManagementSettings,
   EntityManagementSettings,
+  UserManagementSettings,
   IntegrationsSettings,
   SecuritySettings,
   PrivacyPolicySettings
@@ -33,6 +33,8 @@ interface SettingsProps {
   currentUser: any;
   activeBranding: any;
   onUserUpdate?: (userData: { name: string; email: string; plan: string }) => void;
+  highlightPlan?: string;
+  onPlanUpgrade?: (newPlan: string) => void;
 }
 
 const Settings: React.FC<SettingsProps> = ({ 
@@ -45,7 +47,9 @@ const Settings: React.FC<SettingsProps> = ({
   setPreviewBranding, 
   onClose, 
   activeBranding,
-  onUserUpdate
+  onUserUpdate,
+  highlightPlan,
+  onPlanUpgrade
 }) => {
   // Profile data state
   const [profileData, setProfileData] = useState({
@@ -117,22 +121,38 @@ const Settings: React.FC<SettingsProps> = ({
 
   // Users state for User Management
   const [users, setUsers] = useState([
-    { id: '1', name: 'Mukilan', email: 'mukilan@vinnora.com', role: 'Admin' },
-    { id: '2', name: 'Selva', email: 'selva@vinnora.com', role: 'User' },
+    { id: '1', name: 'Mukilan', email: 'mukilan@vinnora.com', role: 'admin', active: true },
+    { id: '2', name: 'Selva', email: 'selva@vinnora.com', role: 'sales-rep', active: true },
   ]);
 
   // Plan variable
-  const plan = profileData.plan || 'free';
+  const plan = (profileData.plan as 'free' | 'starter' | 'professional' | 'enterprise') || 'free';
 
   // Handler for creating a new user
-  const handleCreateUser = (user: { id: string; name: string; email: string; role: string }) => {
+  const handleCreateUser = (user: { id: string; name: string; email: string; role: string; active: boolean }) => {
     setUsers(prev => [...prev, user]);
+  };
+
+  // State for highlighting specific plan during upgrade flow
+  const [highlightedPlan, setHighlightedPlan] = useState<string | undefined>(highlightPlan);
+
+  // Handler for plan upgrades - navigates to subscription with highlighted plan
+  const handleUpgradeRequest = (requiredPlan: string) => {
+    setHighlightedPlan(requiredPlan);
+    onSectionChange('subscription');
+    // The subscription page will show upgrade options based on current plan
+    console.log(`Navigating to subscription page for ${requiredPlan} upgrade`);
   };
   // Content switcher
   const renderContent = () => {
     switch (activeSection) {
       case 'profile': 
-        return <ProfileSettings profileData={profileData} setProfileData={setProfileData} onUserUpdate={onUserUpdate} />;
+        return <ProfileSettings 
+          profileData={profileData} 
+          setProfileData={setProfileData} 
+          onUserUpdate={onUserUpdate}
+          onUpgrade={handleUpgradeRequest}
+        />;
       case 'branding': 
         return (
           <BrandingSettings 
@@ -142,24 +162,26 @@ const Settings: React.FC<SettingsProps> = ({
             setThemeColor={setThemeColor} 
             setPreviewBranding={setPreviewBranding}
             plan={plan}
+            onUpgrade={handleUpgradeRequest}
           />
         );
       case 'subscription': 
-        return <SubscriptionSettings plan={plan} />;
+        return <SubscriptionSettings plan={plan} highlightPlan={highlightedPlan || highlightPlan} onPlanUpgrade={onPlanUpgrade || (() => {})} />;
       case 'data-management': 
-        return <DataManagementSettings entities={entities} plan={plan} />;
+        return <DataManagementSettings entities={entities} plan={plan} onUpgrade={handleUpgradeRequest} />;
       case 'entity-management': 
-        return <EntityManagementSettings entities={entities} plan={plan} />;
+        return <EntityManagementSettings entities={entities} plan={plan} onUpgrade={handleUpgradeRequest} />;
       case 'users': 
         return (
-          <UserManagement
+          <UserManagementSettings
             users={users}
             plan={plan}
             onCreateUser={handleCreateUser}
+            onUpgrade={handleUpgradeRequest}
           />
         );
       case 'integrations': 
-        return <IntegrationsSettings plan={plan} />;
+        return <IntegrationsSettings plan={plan} onUpgrade={handleUpgradeRequest} />;
       case 'security': 
         return <SecuritySettings />;
       case 'privacy': 

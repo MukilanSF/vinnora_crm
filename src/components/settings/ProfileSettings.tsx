@@ -14,6 +14,7 @@ interface ProfileSettingsProps {
   profileData: ProfileData;
   setProfileData: React.Dispatch<React.SetStateAction<ProfileData>>;
   onUserUpdate?: (userData: { name: string; email: string; plan: string }) => void;
+  onUpgrade?: (requiredPlan: string) => void;
 }
 
 // Available plans for testing
@@ -24,7 +25,7 @@ const availablePlans = [
   { value: 'enterprise', label: 'Enterprise Plan', price: '₹14,999', features: 'Custom integrations, Priority support' }
 ];
 
-const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profileData, setProfileData, onUserUpdate }) => {
+const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profileData, setProfileData, onUserUpdate, onUpgrade }) => {
   const handleUserSwitch = (userId: string) => {
     const selectedUser = mockUsers.find(user => user.id === userId);
     if (selectedUser) {
@@ -126,6 +127,20 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profileData, setProfi
               <div className="text-xs text-blue-600 dark:text-blue-400">per month</div>
             </div>
           </div>
+          {profileData.plan === 'free' && onUpgrade && (
+            <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-700">
+              <button
+                onClick={() => onUpgrade('professional')}
+                className="w-full bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-colors flex items-center justify-center space-x-2"
+              >
+                <span>🚀</span>
+                <span>Upgrade to Professional</span>
+              </button>
+              <p className="text-xs text-blue-600 dark:text-blue-400 text-center mt-2">
+                Unlock all features with a paid plan
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

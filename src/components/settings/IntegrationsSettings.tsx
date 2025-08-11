@@ -3,9 +3,10 @@ import { Shield } from 'lucide-react';
 
 interface IntegrationsSettingsProps {
   plan: string;
+  onUpgrade?: (requiredPlan: string) => void;
 }
 
-const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({ plan }) => {
+const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({ plan, onUpgrade }) => {
   const isFreeTrialUser = plan === 'free';
   
   const integrations = [
@@ -116,7 +117,10 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({ plan }) => 
             </div>
           </div>
           <div className="mt-4">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors">
+            <button 
+              onClick={() => onUpgrade?.('starter')}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
               Upgrade Plan
             </button>
           </div>

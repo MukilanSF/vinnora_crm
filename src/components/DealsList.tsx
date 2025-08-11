@@ -106,7 +106,8 @@ const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal, act
 
       {/* Deals List */}
       <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
               <tr>
@@ -191,6 +192,54 @@ const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal, act
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden space-y-4 p-4">
+          {filteredDeals.map((deal) => (
+            <div
+              key={deal.id}
+              onClick={() => onEditDeal(deal)}
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all duration-200 touch-manipulation active:scale-98"
+            >
+              <div className="flex items-start space-x-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0">
+                  <Handshake className="w-6 h-6" />
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                        {deal.dealName}
+                      </h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                        {deal.customerName}
+                      </p>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStageColor(deal.stage)}`}>
+                      {getStageLabel(deal.stage)}
+                    </span>
+                  </div>
+                  
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center space-x-2 text-sm text-gray-900 dark:text-white font-semibold">
+                      <IndianRupee className="w-4 h-4 flex-shrink-0 text-green-600" />
+                      <span>{formatCurrency(deal.amount)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                      <Calendar className="w-4 h-4 flex-shrink-0" />
+                      <span>Expected: {formatDate(deal.expectedCloseDate)}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                      <User className="w-4 h-4 flex-shrink-0" />
+                      <span>{deal.assignedTo || 'Unassigned'}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 

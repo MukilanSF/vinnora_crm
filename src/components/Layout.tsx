@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   LayoutDashboard,
   Users,
@@ -10,6 +10,8 @@ import {
   LogOut,
   TrendingUp,
   Box,
+  Menu,
+  X,
 } from 'lucide-react';
 import Logo from './Logo';
 import PlanStatusBadge from './PlanStatusBadge';
@@ -41,6 +43,8 @@ const Layout: React.FC<LayoutProps> = ({
   currentUser,
   branding,
 }) => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
   const tabs = [
     { id: 'homepage' as const, label: 'Homepage', icon: LayoutDashboard },
     { id: 'deals-list' as const, label: 'Pipeline', icon: TrendingUp },
@@ -56,13 +60,36 @@ const Layout: React.FC<LayoutProps> = ({
     ? URL.createObjectURL(branding.logo)
     : undefined;
 
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <div
       className="h-screen w-screen flex bg-gray-50 dark:bg-gray-900"
       style={branding?.themeColor ? { ['--theme-color' as any]: branding.themeColor } : {}}
     >
-      {/* Sidebar */}
-      <aside className="w-64 h-full bg-gradient-to-b from-[var(--theme-color)] to-orange-600 text-white flex flex-col shadow-xl overflow-y-auto">
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+          onClick={closeMobileMenu}
+        />
+      )}
+
+      {/* Sidebar - Desktop & Mobile */}
+      <aside className={`
+        ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}
+        fixed inset-y-0 left-0 z-50 w-64 bg-gradient-to-b from-[var(--theme-color)] to-orange-600 text-white flex flex-col shadow-xl overflow-y-auto transition-transform duration-300 ease-in-out
+        lg:translate-x-0 lg:static lg:inset-0
+      `}>
+        {/* Mobile Close Button */}
+        <button
+          onClick={closeMobileMenu}
+          className="absolute top-4 right-4 p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors lg:hidden"
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
+
         {/* Logo Section */}
         <div className="p-6 border-b border-orange-400">
           <div className="flex items-center space-x-3">
@@ -73,11 +100,12 @@ const Layout: React.FC<LayoutProps> = ({
             )}
             <div>
               <h1 className="text-lg font-bold">{brandName}</h1>
-              <p className="text-orange-100 text-sm">{brandTagline}</p>
-              <p className="text-orange-100 text-xs">Selling is now fun, no more hassles.</p>
+              <p className="text-orange-100 text-sm hidden sm:block">{brandTagline}</p>
+              <p className="text-orange-100 text-xs hidden sm:block">Selling is now fun, no more hassles.</p>
             </div>
           </div>
         </div>
+        
         {/* Navigation */}
         <nav className="flex-1 py-6">
           <div className="space-y-2 px-4">
@@ -87,15 +115,18 @@ const Layout: React.FC<LayoutProps> = ({
               return (
                 <button
                   key={tab.id}
-                  onClick={() => onTabChange(tab.id)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+                  onClick={() => {
+                    onTabChange(tab.id);
+                    closeMobileMenu();
+                  }}
+                  className={`w-full flex items-center space-x-3 px-4 py-4 rounded-lg transition-all duration-200 touch-manipulation ${
                     isActive
                       ? 'bg-white/20 text-white shadow-lg'
-                      : 'text-orange-100 hover:bg-white/10 hover:text-white'
+                      : 'text-orange-100 hover:bg-white/10 hover:text-white active:bg-white/20'
                   }`}
                   type="button"
                 >
-                  <Icon className="w-5 h-5" />
+                  <Icon className="w-5 h-5 flex-shrink-0" />
                   <span className="font-medium">{tab.label}</span>
                 </button>
               );
@@ -104,26 +135,39 @@ const Layout: React.FC<LayoutProps> = ({
             <div className="my-4 border-t border-orange-400"></div>
             {/* Support Tickets */}
             <button
-              onClick={() => onTabChange('support-tickets')}
-              className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg transition-all duration-200 ${
+              onClick={() => {
+                onTabChange('support-tickets');
+                closeMobileMenu();
+              }}
+              className={`w-full flex items-center space-x-3 px-4 py-4 rounded-lg transition-all duration-200 touch-manipulation ${
                 activeTab === 'support-tickets'
                   ? 'bg-white/20 text-white shadow-lg'
-                  : 'text-orange-100 hover:bg-white/10 hover:text-white'
+                  : 'text-orange-100 hover:bg-white/10 hover:text-white active:bg-white/20'
               }`}
               type="button"
             >
-              <Receipt className="w-5 h-5" />
+              <Receipt className="w-5 h-5 flex-shrink-0" />
               <span className="font-medium">Support Tickets</span>
             </button>
           </div>
         </nav>
       </aside>
+      
       {/* Main Content */}
-      <div className="flex-1 flex flex-col h-full">
+      <div className="flex-1 flex flex-col h-full lg:ml-0">
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm flex-shrink-0">
+        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4 shadow-sm flex-shrink-0">
           <div className="flex items-center justify-between">
-            <div>
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 lg:hidden"
+              aria-label="Open menu"
+            >
+              <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
+            </button>
+
+            <div className="flex-1 lg:flex-none">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-[var(--theme-color)] to-orange-600 rounded-lg flex items-center justify-center">
                   {activeTab === 'homepage' && <LayoutDashboard className="w-4 h-4 text-white" />}
@@ -134,8 +178,8 @@ const Layout: React.FC<LayoutProps> = ({
                   {activeTab === 'inventory' && <Box className="w-4 h-4 text-white" />}
                   {activeTab === 'support-tickets' && <Receipt className="w-4 h-4 text-white" />}
                 </div>
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
+                <div className="hidden sm:block">
+                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
                     {activeTab === 'homepage' && 'Dashboard'}
                     {activeTab === 'deals-list' && 'Pipeline'}
                     {activeTab === 'deals' && 'Deals'}
@@ -145,17 +189,17 @@ const Layout: React.FC<LayoutProps> = ({
                     {activeTab === 'support-tickets' && 'Support'}
                   </h2>
                   {activeTab === 'deals-list' && (
-                    <p className="text-gray-600 text-sm">Drag and drop deals between stages</p>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm">Drag and drop deals between stages</p>
                   )}
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold">
+            <div className="flex items-center space-x-2 sm:space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-3">
+                <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm">
                   {currentUser?.fullName?.[0]?.toUpperCase() || currentUser?.name?.[0]?.toUpperCase() || 'A'}
                 </div>
-                <div className="text-right">
+                <div className="text-right hidden sm:block">
                   <p className="text-sm font-medium text-gray-900 dark:text-white">{currentUser?.fullName || currentUser?.name || 'admin'}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-300">{currentUser?.email || 'admin@vinnora.com'}</p>
                   <div className="mt-1">
@@ -165,25 +209,28 @@ const Layout: React.FC<LayoutProps> = ({
               </div>
               <button
                 onClick={onShowSettings}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
                 type="button"
+                aria-label="Settings"
               >
                 <Settings className="w-4 h-4" />
-                <span className="text-sm">Settings</span>
+                <span className="text-sm hidden sm:inline">Settings</span>
               </button>
               <button
                 onClick={onLogout}
-                className="flex items-center space-x-2 px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
                 type="button"
+                aria-label="Logout"
               >
                 <LogOut className="w-4 h-4" />
-                <span className="text-sm">Logout</span>
+                <span className="text-sm hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
         </header>
+        
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-6">
+        <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">
           <div className="max-w-7xl mx-auto">
             {children}
           </div>

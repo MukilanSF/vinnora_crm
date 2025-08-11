@@ -17,9 +17,10 @@ interface Entity {
 interface EntityManagementSettingsProps {
   entities: Entity[];
   plan: string;
+  onUpgrade?: (requiredPlan: string) => void;
 }
 
-const EntityManagementSettings: React.FC<EntityManagementSettingsProps> = ({ entities, plan }) => {
+const EntityManagementSettings: React.FC<EntityManagementSettingsProps> = ({ entities, plan, onUpgrade }) => {
   const [localEntities, setLocalEntities] = useState(entities);
   const [selectedEntityId, setSelectedEntityId] = useState(entities[0]?.id || '');
   const [editingField, setEditingField] = useState<string | null>(null);
@@ -108,7 +109,10 @@ const EntityManagementSettings: React.FC<EntityManagementSettingsProps> = ({ ent
             </div>
           </div>
           <div className="mt-4">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors">
+            <button 
+              onClick={() => onUpgrade?.('professional')}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
               Upgrade to Professional
             </button>
           </div>

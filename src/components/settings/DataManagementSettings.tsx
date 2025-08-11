@@ -15,9 +15,10 @@ interface Entity {
 interface DataManagementSettingsProps {
   entities: Entity[];
   plan: string;
+  onUpgrade?: (requiredPlan: string) => void;
 }
 
-const DataManagementSettings: React.FC<DataManagementSettingsProps> = ({ entities, plan }) => {
+const DataManagementSettings: React.FC<DataManagementSettingsProps> = ({ entities, plan, onUpgrade }) => {
   const [selectedEntity, setSelectedEntity] = useState('leads');
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [isImporting, setIsImporting] = useState(false);
@@ -88,7 +89,10 @@ const DataManagementSettings: React.FC<DataManagementSettingsProps> = ({ entitie
             </div>
           </div>
           <div className="mt-4">
-            <button className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors">
+            <button 
+              onClick={() => onUpgrade?.('starter')}
+              className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg transition-colors"
+            >
               Upgrade Plan
             </button>
           </div>

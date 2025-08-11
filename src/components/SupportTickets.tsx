@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Search, Filter, Plus, AlertCircle, Clock, CheckCircle, XCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, Filter, Plus, AlertCircle, Clock, CheckCircle, XCircle, Bell, Users, TrendingUp } from 'lucide-react';
 import { SupportTicket, Customer } from '../utils/types';
+import { notificationService, NotificationEvent } from '../utils/notificationService';
 import SearchBar from './SearchBar';
 
 interface SupportTicketsProps {
@@ -28,6 +29,48 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStatus, setSelectedStatus] = useState<'all' | SupportTicket['status']>('all');
   const [selectedPriority, setSelectedPriority] = useState<'all' | SupportTicket['priority']>('all');
+  const [notifications, setNotifications] = useState<NotificationEvent[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [slaReport, setSlaReport] = useState<any>(null);
+
+  // Initialize notifications and check for escalations
+  useEffect(() => {
+    // Check for escalations on component mount and every 5 minutes
+    const checkEscalations = () => {
+      const escalatedTickets = notificationService.checkEscalation(tickets);
+      if (escalatedTickets.length > 0) {
+        console.log(`${escalatedTickets.length} tickets escalated`, escalatedTickets);
+      }
+      
+      // Update notifications
+      setNotifications(notificationService.getNotifications());
+      
+      // Generate SLA report
+      setSlaReport(notificationService.generateSLAReport(tickets));
+    };
+
+    checkEscalations();
+    const interval = setInterval(checkEscalations, 5 * 60 * 1000); // Check every 5 minutes
+
+    // Listen for support notifications
+    const handleNotification = (event: CustomEvent) => {
+      setNotifications(prev => [event.detail, ...prev]);
+    };
+
+    window.addEventListener('support-notification', handleNotification as EventListener);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('support-notification', handleNotification as EventListener);
+    };
+  }, [tickets]);
+
+  // Handle ticket click with notification tracking
+  const handleTicketClick = async (ticket: SupportTicket) => {
+    // Create notification for ticket view
+    await notificationService.createNotification(ticket, 'updated', { action: 'viewed' });
+    onEditTicket(ticket);
+  };
 
   const filteredTickets = tickets.filter(ticket => {
     const matchesSearch = ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -81,16 +124,138 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
 
   return (
     <div className="support-tickets-section space-y-6">
-      {/* Header */}
+      {/* Enhanced Header with Notifications */}
       <div className="section-header flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <button
-          onClick={onAddTicket}
-          className="primary flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-orange-600/25"
-        >
-          <Plus className="w-4 h-4" />
-          <span>New Ticket</span>
-        </button>
+        <div className="flex items-center space-x-4">
+          <button
+            onClick={onAddTicket}
+            className="primary flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-orange-600/25"
+          >
+            <Plus className="w-4 h-4" />
+            <span>New Ticket</span>
+          </button>
+          
+          {/* Notification Bell */}
+          <button
+            onClick={() => setShowNotifications(!showNotifications)}
+            className="relative p-2 text-gray-600 hover:text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+            title="Support Notifications"
+          >
+            <Bell className="w-5 h-5" />
+            {notifications.length > 0 && (
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                {notifications.length > 9 ? '9+' : notifications.length}
+              </span>
+            )}
+          </button>
+        </div>
+        
+        {/* SLA Quick Stats */}
+        {slaReport && (
+          <div className="flex items-center space-x-4 text-sm">
+            <div className="flex items-center space-x-2">
+              <TrendingUp className="w-4 h-4 text-green-600" />
+              <span className="text-gray-600">Avg Resolution: {Math.round(slaReport.averageResolutionTime)}h</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-4 h-4 text-red-600" />
+              <span className="text-gray-600">Overdue: {slaReport.overdueTickets}</span>
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Notification Panel */}
+      {showNotifications && (
+        <div className="bg-white border border-gray-200 rounded-xl p-4 shadow-lg">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Recent Notifications</h3>
+            <button
+              onClick={() => setShowNotifications(false)}
+              className="text-gray-400 hover:text-gray-600"
+            >
+              <XCircle className="w-5 h-5" />
+            </button>
+          </div>
+          <div className="space-y-3 max-h-64 overflow-y-auto">
+            {notifications.length === 0 ? (
+              <p className="text-gray-500 text-center py-4">No recent notifications</p>
+            ) : (
+              notifications.slice(0, 10).map((notification) => (
+                <div
+                  key={notification.id}
+                  className={`p-3 rounded-lg border-l-4 ${
+                    notification.type === 'escalated' ? 'border-red-500 bg-red-50' :
+                    notification.type === 'resolved' ? 'border-green-500 bg-green-50' :
+                    'border-blue-500 bg-blue-50'
+                  }`}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="text-sm font-medium text-gray-900">{notification.message}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        {formatDate(notification.timestamp)} • Ticket #{notification.ticketId}
+                      </p>
+                    </div>
+                    <span className={`px-2 py-1 text-xs rounded-full ${
+                      notification.deliveryStatus === 'sent' ? 'bg-green-100 text-green-700' :
+                      notification.deliveryStatus === 'failed' ? 'bg-red-100 text-red-700' :
+                      'bg-yellow-100 text-yellow-700'
+                    }`}>
+                      {notification.deliveryStatus}
+                    </span>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* SLA Dashboard */}
+      {slaReport && (
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
+            <div className="flex items-center space-x-2">
+              <Users className="w-5 h-5 text-blue-600" />
+              <div>
+                <p className="text-sm text-blue-600 font-medium">Total Tickets</p>
+                <p className="text-xl font-bold text-blue-900">{slaReport.totalTickets}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4">
+            <div className="flex items-center space-x-2">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="text-sm text-green-600 font-medium">Avg Resolution</p>
+                <p className="text-xl font-bold text-green-900">{Math.round(slaReport.averageResolutionTime)}h</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4">
+            <div className="flex items-center space-x-2">
+              <Clock className="w-5 h-5 text-orange-600" />
+              <div>
+                <p className="text-sm text-orange-600 font-medium">Overdue</p>
+                <p className="text-xl font-bold text-orange-900">{slaReport.overdueTickets}</p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-4">
+            <div className="flex items-center space-x-2">
+              <AlertCircle className="w-5 h-5 text-red-600" />
+              <div>
+                <p className="text-sm text-red-600 font-medium">Escalated</p>
+                <p className="text-xl font-bold text-red-900">{slaReport.escalatedTickets}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Filters */}
       <div className="filters-row flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
@@ -152,7 +317,7 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
             filteredTickets.map((ticket) => (
               <tr
                 key={ticket.id}
-                onClick={() => onEditTicket(ticket)}
+                onClick={() => handleTicketClick(ticket)}
                 className="hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
@@ -161,7 +326,7 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
                   </div>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
-                  {ticket.customerName || ticket.customerId}
+                  {ticket.contactId || 'Not specified'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   <span className={`px-3 py-1 rounded-full text-xs font-semibold ${statusColors[ticket.status] || 'bg-gray-100 text-gray-600'}`}>

@@ -366,6 +366,13 @@ function App() {
             recentLeads={leads.slice(0, 5)}
             recentDeals={deals.slice(0, 5)}
             onReminderComplete={handleReminderComplete}
+            plan={(currentUser as any)?.plan || 'free'}
+            allLeads={leads}
+            allCustomers={customers}
+            allDeals={deals}
+            allBills={bills}
+            allSupportTickets={supportTickets}
+            allNotes={notes}
           />
         );
       case 'leads':
@@ -425,7 +432,7 @@ function App() {
                 setSelectedBill(null);
               }}
               onSave={() => {}} // Add onSave prop
-              plan={currentUser?.plan || 'free'} // Pass the user's plan
+              plan={(currentUser as any)?.plan || 'free'} // Pass the user's plan
             />
           </>
         );

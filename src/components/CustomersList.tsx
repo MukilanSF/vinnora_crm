@@ -102,7 +102,8 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, onAddCustomer,
 
       {/* Customers List */}
       <div className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
-        <div className="overflow-x-auto">
+        {/* Desktop Table View */}
+        <div className="hidden lg:block overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">
               <tr>
@@ -195,6 +196,71 @@ const CustomersList: React.FC<CustomersListProps> = ({ customers, onAddCustomer,
               ))}
             </tbody>
           </table>
+        </div>
+
+        {/* Mobile Card View */}
+        <div className="lg:hidden space-y-4 p-4">
+          {filteredCustomers.map((customer) => (
+            <div
+              key={customer.id}
+              onClick={() => onEditCustomer(customer)}
+              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 cursor-pointer hover:shadow-lg transition-all duration-200 touch-manipulation active:scale-98"
+            >
+              <div className="flex items-start space-x-3">
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold flex-shrink-0 ${
+                  customer.type === 'business' 
+                    ? 'bg-gradient-to-br from-purple-600 to-purple-700' 
+                    : 'bg-gradient-to-br from-green-600 to-green-700'
+                }`}>
+                  {customer.type === 'business' ? (
+                    <Building className="w-6 h-6" />
+                  ) : (
+                    <User className="w-6 h-6" />
+                  )}
+                </div>
+                
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">
+                        {customer.name}
+                      </h3>
+                      {customer.companyName && (
+                        <p className="text-sm text-gray-600 dark:text-gray-400 truncate">
+                          {customer.companyName}
+                        </p>
+                      )}
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium flex-shrink-0 ml-2 ${getStageColor(customer.stage)}`}>
+                      {customer.stage}
+                    </span>
+                  </div>
+                  
+                  <div className="mt-3 space-y-2">
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                      <Phone className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">{customer.phone}</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                      <Mail className="w-4 h-4 flex-shrink-0" />
+                      <span className="truncate">{customer.email}</span>
+                    </div>
+                    {customer.address && (
+                      <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
+                        <MapPin className="w-4 h-4 flex-shrink-0" />
+                        <span className="truncate">{customer.address}</span>
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="mt-3 flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+                    <span className="capitalize">{customer.type}</span>
+                    <span>{formatDate(customer.createdAt)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
