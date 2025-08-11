@@ -96,6 +96,59 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
           </button>
         </div>
 
+        {/* Action Buttons - Top Right */}
+        <div className="px-8 pt-4 pb-2 border-b border-gray-200 bg-white">
+          <div className="flex justify-end space-x-3">
+            {/* Download Invoice Button */}
+            {plan !== 'free' ? (
+              <button
+                type="button"
+                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center text-sm"
+                onClick={() => {
+                  // Mock: Generate and download PDF (replace with real logic)
+                  alert('Invoice PDF downloaded (mock)');
+                  // In production, trigger backend to generate/download Invoice.pdf
+                }}
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Download Invoice
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500 cursor-not-allowed flex items-center text-sm"
+                disabled
+                title="Upgrade to download Invoice"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Download Invoice
+              </button>
+            )}
+
+            {/* Send Email Button */}
+            {canSendEmail ? (
+              <button
+                type="button"
+                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center text-sm"
+                onClick={() => setShowEmailModal(true)}
+              >
+                <Mail className="w-4 h-4 mr-2" />
+                Send Email
+              </button>
+            ) : (
+              <button
+                type="button"
+                className="px-4 py-2 rounded-lg bg-gray-300 text-gray-500 cursor-not-allowed flex items-center text-sm"
+                disabled
+                title="Upgrade to Starter+ to send emails"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Send Email
+              </button>
+            )}
+          </div>
+        </div>
+
         <form onSubmit={handleSubmit} className="px-8 py-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Customer ID */}
@@ -220,63 +273,8 @@ const BillDetail: React.FC<BillDetailProps> = ({ bill, isOpen, onClose, onSave, 
           </div>
 
           {/* Footer */}
-          <div className="flex flex-col md:flex-row md:justify-between items-stretch md:items-center pt-6 pb-2 gap-3">
-            {/* Left side - Download Invoice and Send Email buttons */}
-            <div className="flex space-x-3">
-              {/* Download Invoice Button */}
-              {plan !== 'free' ? (
-                <button
-                  type="button"
-                  className="px-5 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                  style={{ minWidth: 160 }}
-                  onClick={() => {
-                    // Mock: Generate and download PDF (replace with real logic)
-                    alert('Invoice PDF downloaded (mock)');
-                    // In production, trigger backend to generate/download Invoice.pdf
-                  }}
-                >
-                  Download Invoice
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  className="px-5 py-2 rounded bg-gray-300 text-gray-500 cursor-not-allowed"
-                  disabled
-                  style={{ minWidth: 160 }}
-                  title="Upgrade to download Invoice"
-                >
-                  Download Invoice
-                </button>
-              )}
-
-              {/* Send Email Button */}
-              {canSendEmail ? (
-                <button
-                  type="button"
-                  className="px-5 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center"
-                  style={{ minWidth: 160 }}
-                  onClick={() => setShowEmailModal(true)}
-                >
-                  <Mail className="w-4 h-4 mr-2" />
-                  Send Email
-                </button>
-              ) : (
-                <div className="relative">
-                  <button
-                    type="button"
-                    className="px-5 py-2 rounded bg-gray-300 text-gray-500 cursor-not-allowed flex items-center"
-                    disabled
-                    style={{ minWidth: 160 }}
-                    title="Upgrade to Starter+ to send emails"
-                  >
-                    <Shield className="w-4 h-4 mr-2" />
-                    Send Email
-                  </button>
-                </div>
-              )}
-            </div>
-
-            {/* Right side - Cancel & Save Changes Buttons */}
+          <div className="flex justify-end items-center pt-6 pb-2 gap-3">
+            {/* Cancel & Save Changes Buttons */}
             <div className="flex space-x-3">
               <button
                 type="button"

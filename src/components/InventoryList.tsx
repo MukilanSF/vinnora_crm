@@ -9,14 +9,6 @@ interface InventoryListProps {
 
 const InventoryList: React.FC<InventoryListProps> = ({ inventories, onAddInventory, onEditInventory }) => (
   <div className="space-y-6">
-    <div className="flex items-center justify-between">
-      <button
-        onClick={onAddInventory}
-        className="bg-orange-600 hover:bg-orange-700 text-white font-semibold px-6 py-2 rounded-lg shadow transition-all"
-      >
-        + New Inventory
-      </button>
-    </div>
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden">
       <table className="w-full">
         <thead className="bg-gray-50 dark:bg-gray-800/50 border-b border-gray-200 dark:border-gray-700">

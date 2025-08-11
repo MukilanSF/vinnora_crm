@@ -64,17 +64,6 @@ const DealsList: React.FC<DealsListProps> = ({ deals, onAddDeal, onEditDeal, act
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <button
-          onClick={onAddDeal}
-          className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-blue-600/25"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add Deal</span>
-        </button>
-      </div>
-
       {/* Filters */}
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
         <div className="flex-1 relative">

@@ -31,12 +31,13 @@ import {
   mockSupportTickets
 } from './utils/data';
 import { Lead, Customer, Deal, Bill, Note, Reminder, DashboardStats, SupportTicket, Inventory } from './utils/types';
+import { notificationService, NotificationEvent } from './utils/notificationService';
 import BillDetail from './components/BillDetail';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [activeTab, setActiveTab] = useState<'homepage' | 'leads' | 'customers' | 'deals' | 'billing' | 'deals-list' | 'support-tickets'>('homepage');
+  const [activeTab, setActiveTab] = useState<'homepage' | 'leads' | 'customers' | 'deals' | 'billing' | 'deals-list' | 'support-tickets' | 'inventory'>('homepage');
   const [showSettings, setShowSettings] = useState(false);
   const [activeSettingsSection, setActiveSettingsSection] = useState('profile');
   const [isLeadEntryOpen, setIsLeadEntryOpen] = useState(false);
@@ -64,6 +65,8 @@ function App() {
   const [reminders, setReminders] = useState<Reminder[]>(mockReminders);
   const [dashboardStats, setDashboardStats] = useState<DashboardStats>(mockDashboardStats);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>(mockSupportTickets);
+  const [notifications, setNotifications] = useState<NotificationEvent[]>([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Branding and theme state
   const [branding, setBranding] = useState({
@@ -86,6 +89,35 @@ function App() {
     const color = previewBranding?.themeColor || themeColor;
     document.documentElement.style.setProperty('--theme-color', color);
   }, [themeColor, previewBranding]);
+
+  // Initialize notifications and listen for support events
+  useEffect(() => {
+    if (supportTickets.length > 0) {
+      // Check for escalations and update notifications
+      const escalatedTickets = notificationService.checkEscalation(supportTickets);
+      if (escalatedTickets.length > 0) {
+        escalatedTickets.forEach(ticket => {
+          notificationService.createNotification(ticket, 'escalated', { reason: 'SLA breach' });
+        });
+      }
+
+      // Update notifications
+      setNotifications(notificationService.getNotifications());
+    }
+
+    // Listen for support notifications
+    const handleNotification = (event: CustomEvent) => {
+      setNotifications(prev => [event.detail, ...prev]);
+    };
+
+    window.addEventListener('supportNotification', handleNotification as EventListener);
+    return () => window.removeEventListener('supportNotification', handleNotification as EventListener);
+  }, [supportTickets]);
+
+  // Handle notification toggle
+  const handleNotificationToggle = () => {
+    setShowNotifications(!showNotifications);
+  };
 
   // Branding values to use (preview or applied)
   const activeBranding = previewBranding
@@ -504,6 +536,15 @@ function App() {
         onLogout={handleLogout}
         currentUser={currentUser}
         branding={activeBranding}
+        onAddCustomer={() => setIsCustomerEntryOpen(true)}
+        onAddDeal={() => setIsDealEntryOpen(true)}
+        onAddBill={() => setIsBillEntryOpen(true)}
+        onAddInventory={() => setIsInventoryEntryOpen(true)}
+        onAddTicket={() => setIsSupportTicketEntryOpen(true)}
+        notifications={notifications}
+        onNotificationToggle={handleNotificationToggle}
+        showNotifications={showNotifications}
+        tickets={supportTickets}
       >
         {renderActiveTab()}
       </Layout>

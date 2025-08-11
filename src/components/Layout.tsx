@@ -12,9 +12,13 @@ import {
   Box,
   Menu,
   X,
+  Bell,
+  XCircle,
+  AlertCircle,
 } from 'lucide-react';
 import Logo from './Logo';
 import PlanStatusBadge from './PlanStatusBadge';
+import { notificationService, NotificationEvent } from '../utils/notificationService';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -24,6 +28,15 @@ interface LayoutProps {
   onShowSettings: () => void;
   onLogout: () => void;
   currentUser: any;
+  onAddCustomer?: () => void;
+  onAddDeal?: () => void;
+  onAddBill?: () => void;
+  onAddInventory?: () => void;
+  onAddTicket?: () => void;
+  notifications?: NotificationEvent[];
+  onNotificationToggle?: () => void;
+  showNotifications?: boolean;
+  tickets?: any[];
   branding?: {
     name: string;
     tagline: string;
@@ -41,6 +54,15 @@ const Layout: React.FC<LayoutProps> = ({
   onShowSettings,
   onLogout,
   currentUser,
+  onAddCustomer,
+  onAddDeal,
+  onAddBill,
+  onAddInventory,
+  onAddTicket,
+  notifications = [],
+  onNotificationToggle,
+  showNotifications = false,
+  tickets = [],
   branding,
 }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -179,22 +201,135 @@ const Layout: React.FC<LayoutProps> = ({
                   {activeTab === 'support-tickets' && <Receipt className="w-4 h-4 text-white" />}
                 </div>
                 <div className="hidden sm:block">
-                  <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                    {activeTab === 'homepage' && 'Dashboard'}
-                    {activeTab === 'deals-list' && 'Pipeline'}
-                    {activeTab === 'deals' && 'Deals'}
-                    {activeTab === 'customers' && 'Customers'}
-                    {activeTab === 'billing' && 'Billing'}
-                    {activeTab === 'inventory' && 'Inventory'}
-                    {activeTab === 'support-tickets' && 'Support'}
-                  </h2>
+                  <div className="flex items-center space-x-4">
+                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                      {activeTab === 'homepage' && 'Dashboard'}
+                      {activeTab === 'deals-list' && 'Pipeline'}
+                      {activeTab === 'deals' && 'Deals'}
+                      {activeTab === 'customers' && 'Customers'}
+                      {activeTab === 'billing' && 'Billing'}
+                      {activeTab === 'inventory' && 'Inventory'}
+                      {activeTab === 'support-tickets' && 'Support'}
+                    </h2>
+                    
+                    {/* Action Buttons next to title */}
+                    {activeTab === 'customers' && onAddCustomer && (
+                      <button
+                        onClick={onAddCustomer}
+                        className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Customer</span>
+                      </button>
+                    )}
+                    {activeTab === 'deals' && onAddDeal && (
+                      <button
+                        onClick={onAddDeal}
+                        className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add Deal</span>
+                      </button>
+                    )}
+                    {activeTab === 'billing' && onAddBill && (
+                      <button
+                        onClick={onAddBill}
+                        className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>New Bill</span>
+                      </button>
+                    )}
+                    {activeTab === 'inventory' && onAddInventory && (
+                      <button
+                        onClick={onAddInventory}
+                        className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>New Inventory</span>
+                      </button>
+                    )}
+                    {activeTab === 'support-tickets' && onAddTicket && (
+                      <button
+                        onClick={onAddTicket}
+                        className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>New Ticket</span>
+                      </button>
+                    )}
+                  </div>
                   {activeTab === 'deals-list' && (
                     <p className="text-gray-600 dark:text-gray-400 text-sm">Drag and drop deals between stages</p>
                   )}
                 </div>
               </div>
             </div>
+            
             <div className="flex items-center space-x-2 sm:space-x-4">
+              {/* Support Notifications */}
+              <div className="relative">
+                <button
+                  onClick={onNotificationToggle}
+                  className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Support Notifications"
+                >
+                  <Bell className="w-5 h-5" />
+                  {notifications.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                      {notifications.length}
+                    </span>
+                  )}
+                </button>
+
+                {/* Notification Panel */}
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50">
+                    <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                      <h3 className="font-semibold text-gray-900 dark:text-white">Support Notifications</h3>
+                      <button
+                        onClick={onNotificationToggle}
+                        className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                      >
+                        <XCircle className="w-5 h-5" />
+                      </button>
+                    </div>
+                    <div className="max-h-64 overflow-y-auto">
+                      {notifications.length === 0 ? (
+                        <div className="p-4 text-center text-gray-500 dark:text-gray-400">
+                          No new notifications
+                        </div>
+                      ) : (
+                        notifications.map((notification, index) => (
+                          <div key={index} className="p-3 border-b border-gray-100 dark:border-gray-700 last:border-b-0 hover:bg-gray-50 dark:hover:bg-gray-700">
+                            <div className="flex items-start space-x-3">
+                              <div className="flex-shrink-0">
+                                {notification.type === 'escalated' || notification.type === 'overdue' ? (
+                                  <AlertCircle className="w-5 h-5 text-red-500" />
+                                ) : (
+                                  <Bell className="w-5 h-5 text-blue-500" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                  Ticket #{notification.ticketId} - {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
+                                </p>
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  {notification.message}
+                                </p>
+                                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                  {new Date(notification.timestamp).toLocaleString()}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center space-x-2 sm:space-x-3">
                 <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm">
                   {currentUser?.fullName?.[0]?.toUpperCase() || currentUser?.name?.[0]?.toUpperCase() || 'A'}

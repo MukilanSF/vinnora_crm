@@ -62,17 +62,6 @@ const BillingList: React.FC<BillingListProps> = ({ bills, onAddBill, onEditBill,
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <button
-          onClick={onAddBill}
-          className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg transition-all duration-200 hover:scale-105 hover:shadow-lg hover:shadow-purple-600/25"
-        >
-          <Plus className="w-4 h-4" />
-          <span>New Bill</span>
-        </button>
-      </div>
-
       {/* Filters */}
       <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
         <div className="flex-1 relative">
