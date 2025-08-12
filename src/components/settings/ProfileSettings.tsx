@@ -220,6 +220,18 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profileData, setProfi
         >
           <span>Save Changes</span>
         </button>
+
+        {/* Logout Button */}
+        <button
+          onClick={() => {
+            if (window.confirm('Are you sure you want to logout?')) {
+              window.location.reload(); // fallback if no prop, will trigger logout in most SPA setups
+            }
+          }}
+          className="flex items-center space-x-2 bg-gray-200 hover:bg-red-600 hover:text-white text-gray-800 px-6 py-3 rounded-lg transition-all duration-200 mt-8 w-full justify-center border border-gray-300 hover:border-red-700"
+        >
+          <span>Logout</span>
+        </button>
       </div>
     </div>
   );

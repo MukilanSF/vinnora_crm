@@ -113,13 +113,13 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
     <div className="support-tickets-section space-y-6">
       {/* Enhanced Header with SLA Stats */}
       <div className="section-header flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-        <div className="flex items-center space-x-4">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Support Tickets</h2>
-        </div>
-        
         {/* SLA Quick Stats */}
         {slaReport && (
           <div className="flex items-center space-x-4 text-sm">
+            <div className="flex items-center space-x-2">
+              <Users className="w-4 h-4 text-blue-600" />
+              <span className="text-gray-600">Total Tickets: {slaReport.totalTickets}</span>
+            </div>
             <div className="flex items-center space-x-2">
               <TrendingUp className="w-4 h-4 text-green-600" />
               <span className="text-gray-600">Avg Resolution: {Math.round(slaReport.averageResolutionTime)}h</span>
@@ -128,54 +128,15 @@ const SupportTickets: React.FC<SupportTicketsProps> = ({ tickets, onAddTicket, o
               <AlertCircle className="w-4 h-4 text-red-600" />
               <span className="text-gray-600">Overdue: {slaReport.overdueTickets}</span>
             </div>
+            <div className="flex items-center space-x-2">
+              <XCircle className="w-4 h-4 text-orange-600" />
+              <span className="text-gray-600">Escalated: {slaReport.escalatedTickets}</span>
+            </div>
           </div>
         )}
       </div>
 
-      {/* SLA Dashboard */}
-      {slaReport && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <Users className="w-5 h-5 text-blue-600" />
-              <div>
-                <p className="text-sm text-blue-600 font-medium">Total Tickets</p>
-                <p className="text-xl font-bold text-blue-900">{slaReport.totalTickets}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <CheckCircle className="w-5 h-5 text-green-600" />
-              <div>
-                <p className="text-sm text-green-600 font-medium">Avg Resolution</p>
-                <p className="text-xl font-bold text-green-900">{Math.round(slaReport.averageResolutionTime)}h</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-orange-50 to-orange-100 border border-orange-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <Clock className="w-5 h-5 text-orange-600" />
-              <div>
-                <p className="text-sm text-orange-600 font-medium">Overdue</p>
-                <p className="text-xl font-bold text-orange-900">{slaReport.overdueTickets}</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-br from-red-50 to-red-100 border border-red-200 rounded-xl p-4">
-            <div className="flex items-center space-x-2">
-              <AlertCircle className="w-5 h-5 text-red-600" />
-              <div>
-                <p className="text-sm text-red-600 font-medium">Escalated</p>
-                <p className="text-xl font-bold text-red-900">{slaReport.escalatedTickets}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Filters */}
       <div className="filters-row flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">

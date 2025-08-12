@@ -35,6 +35,15 @@ import { notificationService, NotificationEvent } from './utils/notificationServ
 import BillDetail from './components/BillDetail';
 
 function App() {
+  // Listen for profile info click event to open settings modal at profile section
+  useEffect(() => {
+    const handler = () => {
+      setActiveSettingsSection('profile');
+      setShowSettings(true);
+    };
+    window.addEventListener('openProfileSettings', handler);
+    return () => window.removeEventListener('openProfileSettings', handler);
+  }, []);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [activeTab, setActiveTab] = useState<'homepage' | 'leads' | 'customers' | 'deals' | 'billing' | 'deals-list' | 'support-tickets' | 'inventory'>('homepage');
@@ -526,6 +535,9 @@ function App() {
     }
   };
 
+
+
+
   return (
     <>
       <Layout
@@ -533,7 +545,6 @@ function App() {
         onTabChange={setActiveTab}
         onNewNote={() => setIsNoteEntryOpen(true)}
         onShowSettings={() => setShowSettings(true)}
-        onLogout={handleLogout}
         currentUser={currentUser}
         branding={activeBranding}
         onAddCustomer={() => setIsCustomerEntryOpen(true)}
