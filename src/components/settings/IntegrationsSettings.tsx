@@ -98,6 +98,20 @@ const IntegrationsSettings: React.FC<IntegrationsSettingsProps> = ({ plan, onUpg
 
   const categories = [...new Set(integrations.map(app => app.category))];
 
+  if (plan !== 'professional' && plan !== 'enterprise') {
+    return (
+      <div className="p-8 text-center text-orange-700 bg-orange-50 rounded-lg">
+        Integrations are available only for Professional and Enterprise plans.
+        <button
+          className="mt-4 px-4 py-2 bg-blue-600 text-white rounded"
+          onClick={() => onUpgrade && onUpgrade('professional')}
+        >
+          Upgrade to Professional
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6">
       {/* Plan Restriction Notice */}

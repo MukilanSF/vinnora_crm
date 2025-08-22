@@ -232,6 +232,29 @@ const ProfileSettings: React.FC<ProfileSettingsProps> = ({ profileData, setProfi
         >
           <span>Logout</span>
         </button>
+
+        {/* Admin Plan Switcher - Always visible for admin role */}
+        {profileData.role === 'admin' && (
+          <div className="mb-4">
+            <label className="block font-medium mb-1">Switch Plan (Admin Only)</label>
+            <select
+              value={profileData.plan}
+              onChange={e => setProfileData({ ...profileData, plan: e.target.value })}
+              className="border rounded px-2 py-1"
+            >
+              <option value="free">Free</option>
+              <option value="starter">Starter</option>
+              <option value="professional">Professional</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+            <button
+              className="ml-2 px-3 py-1 bg-blue-600 text-white rounded"
+              onClick={() => onUserUpdate && onUserUpdate(profileData)}
+            >
+              Save & Test
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

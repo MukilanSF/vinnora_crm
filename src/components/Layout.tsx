@@ -176,8 +176,8 @@ const Layout: React.FC<LayoutProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex flex-col h-full lg:ml-0">
         {/* Top Header */}
-        <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 sm:px-6 py-4 shadow-sm flex-shrink-0">
-          <div className="flex items-center justify-between">
+        <header className="flex items-center justify-between h-20 px-6 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+          <div className="flex items-center space-x-4">
             {/* Mobile Menu Button */}
             <button
               onClick={() => setIsMobileMenuOpen(true)}
@@ -187,135 +187,132 @@ const Layout: React.FC<LayoutProps> = ({
               <Menu className="w-6 h-6 text-gray-600 dark:text-gray-300" />
             </button>
 
-            <div className="flex-1 lg:flex-none">
-              <div className="flex items-center space-x-3">
-                <div className="w-8 h-8 bg-gradient-to-br from-[var(--theme-color)] to-orange-600 rounded-lg flex items-center justify-center">
-                  {activeTab === 'homepage' && <LayoutDashboard className="w-4 h-4 text-white" />}
-                  {activeTab === 'deals-list' && <TrendingUp className="w-4 h-4 text-white" />}
-                  {activeTab === 'deals' && <Handshake className="w-4 h-4 text-white" />}
-                  {activeTab === 'customers' && <UserCheck className="w-4 h-4 text-white" />}
-                  {activeTab === 'billing' && <Receipt className="w-4 h-4 text-white" />}
-                  {activeTab === 'inventory' && <Box className="w-4 h-4 text-white" />}
-                  {activeTab === 'support-tickets' && <Receipt className="w-4 h-4 text-white" />}
-                </div>
-                <div className="hidden sm:block">
-                  <div className="flex items-center space-x-4">
-                    <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-                      {activeTab === 'homepage' && 'Dashboard'}
-                      {activeTab === 'deals-list' && 'Pipeline'}
-                      {activeTab === 'deals' && 'Deals'}
-                      {activeTab === 'customers' && 'Customers'}
-                      {activeTab === 'billing' && 'Billing'}
-                      {activeTab === 'inventory' && 'Inventory'}
-                      {activeTab === 'support-tickets' && 'Support'}
-                    </h2>
-                    
-                    {/* Action Buttons next to title */}
-                    {activeTab === 'customers' && onAddCustomer && (
-                      <button
-                        onClick={onAddCustomer}
-                        className="flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Customer</span>
-                      </button>
-                    )}
-                    {activeTab === 'deals' && onAddDeal && (
-                      <button
-                        onClick={onAddDeal}
-                        className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>Add Deal</span>
-                      </button>
-                    )}
-                    {activeTab === 'billing' && onAddBill && (
-                      <button
-                        onClick={onAddBill}
-                        className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>New Bill</span>
-                      </button>
-                    )}
-                    {activeTab === 'inventory' && onAddInventory && (
-                      <button
-                        onClick={onAddInventory}
-                        className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>New Inventory</span>
-                      </button>
-                    )}
-                    {activeTab === 'support-tickets' && onAddTicket && (
-                      <button
-                        onClick={onAddTicket}
-                        className="flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
-                      >
-                        <Plus className="w-4 h-4" />
-                        <span>New Ticket</span>
-                      </button>
-                    )}
-                  </div>
-                  {activeTab === 'deals-list' && (
-                    <p className="text-gray-600 dark:text-gray-400 text-sm">Drag and drop deals between stages</p>
+            <div className="hidden sm:flex items-center space-x-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-[var(--theme-color)] to-orange-600 rounded-lg flex items-center justify-center">
+                {activeTab === 'homepage' && <LayoutDashboard className="w-4 h-4 text-white" />}
+                {activeTab === 'deals-list' && <TrendingUp className="w-4 h-4 text-white" />}
+                {activeTab === 'deals' && <Handshake className="w-4 h-4 text-white" />}
+                {activeTab === 'customers' && <UserCheck className="w-4 h-4 text-white" />}
+                {activeTab === 'billing' && <Receipt className="w-4 h-4 text-white" />}
+                {activeTab === 'inventory' && <Box className="w-4 h-4 text-white" />}
+                {activeTab === 'support-tickets' && <Receipt className="w-4 h-4 text-white" />}
+              </div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+                {activeTab === 'homepage' && 'Dashboard'}
+                {activeTab === 'deals-list' && 'Pipeline'}
+                {activeTab === 'deals' && 'Deals'}
+                {activeTab === 'customers' && 'Customers'}
+                {activeTab === 'billing' && 'Billing'}
+                {activeTab === 'inventory' && 'Inventory'}
+                {activeTab === 'support-tickets' && 'Support'}
+              </h2>
+              {/* Action Buttons to the right of the title */}
+              {activeTab === 'customers' && onAddCustomer && (
+                <button
+                  onClick={onAddCustomer}
+                  className="ml-4 flex items-center space-x-2 bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Customer</span>
+                </button>
+              )}
+              {activeTab === 'deals' && onAddDeal && (
+                <button
+                  onClick={onAddDeal}
+                  className="ml-4 flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Add Deal</span>
+                </button>
+              )}
+              {activeTab === 'billing' && onAddBill && (
+                <button
+                  onClick={onAddBill}
+                  className="ml-4 flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New Bill</span>
+                </button>
+              )}
+              {activeTab === 'inventory' && onAddInventory && (
+                <button
+                  onClick={onAddInventory}
+                  className="ml-4 flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New Inventory</span>
+                </button>
+              )}
+              {activeTab === 'support-tickets' && onAddTicket && (
+                <button
+                  onClick={onAddTicket}
+                  className="ml-4 flex items-center space-x-2 bg-orange-600 hover:bg-orange-700 text-white px-3 py-1.5 rounded-lg transition-all duration-200 hover:scale-105 text-sm"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>New Ticket</span>
+                </button>
+              )}
+            </div>
+          </div>
+          
+          <div className="flex items-center space-x-2 sm:space-x-4">
+            {/* Support Notifications */}
+            <div className="relative flex items-center space-x-2 sm:space-x-3">
+              <button
+                onClick={onNotificationToggle}
+                className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                title="Support Notifications"
+              >
+                <Bell className="w-5 h-5" />
+                {notifications.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {notifications.length}
+                  </span>
+                )}
+              </button>
+              {/* Settings button to the left of profile */}
+              <button
+                onClick={onShowSettings}
+                className="flex items-center space-x-2 px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
+                type="button"
+                aria-label="Settings"
+              >
+                <Settings className="w-4 h-4" />
+                <span className="text-sm hidden sm:inline">Settings</span>
+              </button>
+              {/* Profile info at far right, clickable */}
+              <button
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    const event = new CustomEvent('openProfileSettings');
+                    window.dispatchEvent(event);
+                  }
+                }}
+                className="flex items-center space-x-2 group px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
+                type="button"
+                aria-label="Profile"
+              >
+                <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm">
+                  {currentUser?.profilePicture ? (
+                    <img src={currentUser.profilePicture} alt="Profile" className="w-8 h-8 rounded-full object-cover" />
+                  ) : (
+                    currentUser?.fullName?.[0]?.toUpperCase() ||
+                    currentUser?.name?.[0]?.toUpperCase() ||
+                    'A'
                   )}
                 </div>
-              </div>
-            </div>
-            
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              {/* Support Notifications */}
-              <div className="relative flex items-center space-x-2 sm:space-x-3">
-                <button
-                  onClick={onNotificationToggle}
-                  className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-                  title="Support Notifications"
-                >
-                  <Bell className="w-5 h-5" />
-                  {notifications.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {notifications.length}
-                    </span>
-                  )}
-                </button>
-                {/* Settings button to the left of profile */}
-                <button
-                  onClick={onShowSettings}
-                  className="flex items-center space-x-2 px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
-                  type="button"
-                  aria-label="Settings"
-                >
-                  <Settings className="w-4 h-4" />
-                  <span className="text-sm hidden sm:inline">Settings</span>
-                </button>
-                {/* Profile info at far right, clickable */}
-                <button
-                  onClick={() => {
-                    if (typeof window !== 'undefined') {
-                      const event = new CustomEvent('openProfileSettings');
-                      window.dispatchEvent(event);
-                    }
-                  }}
-                  className="flex items-center space-x-2 group px-2 sm:px-3 py-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors touch-manipulation"
-                  type="button"
-                  aria-label="Profile"
-                >
-                  <div className="w-8 h-8 bg-orange-100 text-orange-700 rounded-full flex items-center justify-center font-bold text-sm">
-                    {currentUser?.fullName?.[0]?.toUpperCase() || currentUser?.name?.[0]?.toUpperCase() || 'A'}
+                <div className="text-right hidden sm:block">
+                  <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:underline">
+                    {currentUser?.fullName || currentUser?.name || 'admin'}
+                  </p>
+                  <div className="mt-1">
+                    <PlanStatusBadge plan={currentUser?.plan || 'free'} />
                   </div>
-                  <div className="text-right hidden sm:block">
-                    <p className="text-sm font-medium text-gray-900 dark:text-white group-hover:underline">{currentUser?.fullName || currentUser?.name || 'admin'}</p>
-                    <p className="text-xs text-gray-500 dark:text-gray-300">{currentUser?.email || 'admin@vinnora.com'}</p>
-                    <div className="mt-1">
-                      <PlanStatusBadge plan={currentUser?.plan || 'free'} />
-                    </div>
-                  </div>
-                </button>
-              </div>
+                </div>
+              </button>
             </div>
-        </div>
-      </header>
+          </div>
+        </header>
         
         {/* Main Content Area */}
         <main className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 p-4 sm:p-6">

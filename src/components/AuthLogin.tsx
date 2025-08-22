@@ -1,4 +1,17 @@
 import React, { useState } from 'react';
+// Password strength utility
+function getPasswordStrength(password: string) {
+  let score = 0;
+  if (!password) return { score, label: 'Too short', color: 'bg-gray-200' };
+  if (password.length >= 8) score++;
+  if (/[A-Z]/.test(password)) score++;
+  if (/[0-9]/.test(password)) score++;
+  if (/[^A-Za-z0-9]/.test(password)) score++;
+  if (password.length >= 12) score++;
+  const labels = ['Too short', 'Weak', 'Fair', 'Good', 'Strong', 'Very strong'];
+  const colors = ['bg-gray-200', 'bg-red-400', 'bg-yellow-400', 'bg-blue-400', 'bg-green-500', 'bg-green-700'];
+  return { score, label: labels[score], color: colors[score] };
+}
 import { LogIn } from 'lucide-react';
 import Logo from './Logo';
 
@@ -12,6 +25,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
   const [form, setForm] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [showForgot, setShowForgot] = useState(false);
+  const [consentGiven, setConsentGiven] = useState(false);
 
   const handleInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -91,8 +105,8 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center p-4">
-      <div className="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-8">
+    <div className="min-h-screen bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center p-2 sm:p-4">
+      <div className="bg-white text-gray-900 rounded-2xl shadow-2xl w-full max-w-md p-4 sm:p-8 transition-all duration-300" style={{ minWidth: 0 }}>
         {/* Logo and Branding */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
@@ -153,9 +167,39 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                   value={form.password}
                   onChange={handleInput}
                   disabled={isLoading}
+                  autoComplete={isSignup ? 'new-password' : 'current-password'}
                 />
+                {/* Password strength meter for sign-up */}
+                {isSignup && (
+                  <>
+                    <div className="mt-1">
+                      {form.password && (
+                        <div className="flex items-center space-x-2">
+                          <div className={`h-2 w-24 rounded ${getPasswordStrength(form.password).color}`}></div>
+                          <span className="text-xs text-gray-600">{getPasswordStrength(form.password).label}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      Use a strong password with <span className="font-semibold">a capital letter, a special character, alphabets, and numbers</span>.
+                    </div>
+                  </>
+                )}
               </div>
-              <div className="flex justify-between items-center">
+              <div className="flex items-center mt-4">
+                <input
+                  type="checkbox"
+                  id="privacyConsent"
+                  checked={consentGiven}
+                  onChange={e => setConsentGiven(e.target.checked)}
+                  className="mr-2"
+                  required
+                />
+                <label htmlFor="privacyConsent" className="text-sm">
+                  I have read and agree to the <a href="/privacy-policy" target="_blank" className="underline text-blue-600">Privacy Policy</a>
+                </label>
+              </div>
+              <div className="flex justify-between items-center flex-wrap gap-2">
                 <button
                   type="button"
                   className="text-blue-600 hover:underline text-sm"
@@ -166,8 +210,8 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                 </button>
                 <button
                   type="submit"
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg"
-                  disabled={isLoading}
+                  className={`bg-orange-600 hover:bg-orange-700 text-white px-6 py-2 rounded-lg ${!consentGiven ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : ''}`}
+                  disabled={isLoading || !consentGiven}
                 >
                   {isLoading ? (isSignup ? 'Signing up...' : 'Signing in...') : isSignup ? 'Sign Up' : 'Sign In'}
                 </button>
@@ -208,7 +252,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
             </form>
           )}
 
-          {/* Google Login Button */}
+          {/* Google Login Button (to be replaced with Google Identity Services) */}
           {!showForgot && (
             <button
               onClick={handleGoogleLogin}
@@ -231,7 +275,7 @@ const AuthLogin: React.FC<AuthLoginProps> = ({ onLogin }) => {
                 </svg>
               )}
               <span className="font-medium">
-                {isLoading ? 'Signing in...' : 'Continue with Google'}
+                {isLoading ? 'Signing in...' : (isSignup ? 'Sign up with Google' : 'Continue with Google')}
               </span>
             </button>
           )}
